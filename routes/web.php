@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 
@@ -21,3 +22,7 @@ Route::get('/', function () {
 Route::post('/auth', [LoginController::class, 'auth'])->name('login.auth');
 Route::view('/inicio', 'inicio')->name('inicio')->middleware('auth.check');
 Route::get('/logout', [LoginController::class, 'destroy'])->name('logout');
+
+Route::view('/contas', 'contas');
+
+Route::post('/alterarReceita', [ContasController::class, 'alterarReceita'])->name('alterarReceita');
