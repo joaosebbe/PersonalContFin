@@ -31,3 +31,4 @@ Route::post('/receitaUnica', [ContasController::class, 'insereReceitaUnica'])->n
 Route::post('/tipoDespesa', [ContasController::class, 'insereTipoDespesa'])->name('insereTipoDespesa');
 Route::post('/atrelamento', [ContasController::class, 'insereAtrelamento'])->name('insereAtrelamento');
 Route::post('/despesa', [ContasController::class, 'insereDespesa'])->name('insereDespesa');
+Route::post('/editaDespesa', [ContasController::class, 'editaDespesa'])->name('editaDespesa');

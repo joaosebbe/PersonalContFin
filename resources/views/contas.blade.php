@@ -18,57 +18,62 @@
                 </div>
             </div>
         </form>
-        <div class="row mt-4">
-            <div class="col-6">
+        <div class="row mt-4" style="zoom: 85%">
+            <div class="col-4">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalReceitaUnica"
-                    style="width: 100%">Add Receita Única</button>
+                    style="width: 100%">Receita Única</button>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTipoDespesa"
-                    style="width: 100%">Add Tipo Despesa</button>
+                    style="width: 100%">Tipo Despesa</button>
             </div>
-            <div class="col-6 mt-2">
+            <div class="col-4">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAtrelamentos"
-                    style="width: 100%">Add Atrelamentos</button>
+                    style="width: 100%">Atrelamentos</button>
             </div>
-            <div class="col-6 mt-2">
+            <div class="col-12 mt-2">
                 <button type="button" class="btn btn-warning text-light" data-bs-toggle="modal"
-                    data-bs-target="#modalNovaDespesa" style="width: 100%">Add Nova Despesa</button>
+                    data-bs-target="#modalNovaDespesa" style="width: 100%">Nova Despesa</button>
             </div>
         </div>
+        <p class="mt-3" style="color: rgb(165, 164, 164)"><small>Obs: Clique na linha da despesa para edita-la.</small></p>
 
-        <div class="row mt-5">
-            <table class="table table-striped table-hover table-sm">
+        <div class="row mt-1">
+            <table class="table table-striped table-hover table-sm" style="zoom: 70%">
                 <thead>
                     <tr>
-                        <th scope="col">Desc</th>
-                        <th scope="col">Valor</th>
-                        <th scope="col">Pgto</th>
-                        <th scope="col">Dt Inicio</th>
-                        <th scope="col">Dt Fim</th>
+                        <th scope="col">DESC</th>
+                        <th scope="col">VALOR</th>
+                        <th scope="col">PGTO</th>
+                        <th scope="col">PARCELA</th>
+                        <th scope="col">DATA</th>
+                        <th scope="col">DATA FIM</th>
                     </tr>
                 </thead>
                 <tbody class="table-group-divider">
                     @foreach ($despesas as $despesa)
-                        <tr class="{{ $despesa->receita_despesa == 'R' ? 'table-success' : 'table-danger' }}">
+                        @if (date('Y-m', strtotime($despesa->data_cobranca)) == date('Y-m'))
+                            @if ($despesa->receita_despesa == 'D')
+                                <tr data-bs-toggle="modal" data-bs-target="#modalEditaDespesa" onclick="modalEditaDespesa('{{ $despesa->descricao }}', '{{ $despesa->valor }}', '{{ $despesa->tipo_gasto }}', '{{ $despesa->data_inicio }}', '{{ $despesa->data_fim }}', '{{ $despesa->tipo_pagamento }}', '{{ $despesa->atrelamento }}', '{{ $despesa->despesa_fixa }}')"
+                                    class="table-danger" style="cursor: pointer">
+                            @else
+                                <tr class="table-success" style="cursor: pointer">
+                            @endif
                             <td>{{ $despesa->descricao }}</td>
-                            @php
-                                if ($despesa->tipo_pagamento == 'CREDITO') {
-                                    $dataInicio = new DateTime($despesa->data_inicio);
-                                    $dataFim = new DateTime($despesa->data_fim);
-
-                                    // Calcula a diferença entre as datas
-                                    $diferenca = $dataInicio->diff($dataFim);
-
-                                    // Obtém a diferença em meses
-                                    $diferencaMeses = $diferenca->y * 12 + $diferenca->m;
-
-                                    $valorMensal = $despesa->valor / $diferencaMeses;
-                                }
-                            @endphp
-                            <td>R$ {{ number_format($valorMensal, 2, ',', '.') }}</td>
+                            <td>R$
+                                @if ($despesa->tipo_pagamento == 'CREDITO' && intval($despesa->nmr_parcelas) > 1)
+                                    {{ number_format($despesa->valor_quebrado, 2, ',', '.') }}
+                                @else
+                                    {{ number_format($despesa->valor, 2, ',', '.') }}
+                                @endif
+                            </td>
                             <td>{{ $despesa->tipo_pagamento }}</td>
-                        </tr>
+                            <td>{{ $despesa->parcela }}</td>
+                            <td>{{ date('m/Y', strtotime($despesa->data_inicio)) }}</td>
+                            <td>{{ $despesa->data_fim != '' ? date('m/Y', strtotime($despesa->data_fim)) : '' }}
+                            </td>
+                            </tr>
+                        @endif
                     @endforeach
                 </tbody>
             </table>
@@ -210,7 +215,7 @@
                                 </div>
                                 <div class="col-6 mt-3">
                                     <label for="dataFim">Data Fim <small>(opcional)</small></label>
-                                    <input type="date" name="dataFim" id="dataFim" class="form-control" required>
+                                    <input type="date" name="dataFim" id="dataFim" class="form-control">
                                 </div>
                                 <div class="col-12 mt-3">
                                     <label for="tipoDespesa">Tipo Despesa</label>
@@ -249,11 +254,109 @@
                 </div>
             </div>
         </div>
+        <!-- Modal Edita Despesa -->
+        <div class="modal fade" id="modalEditaDespesa" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Despesa</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{{ route('editaDespesa') }}">
+                            @csrf
+                            <div class="row form-group">
+                                <div class="col-12">
+                                    <label for="nomeDespesaEdit">Despesa</label>
+                                    <input type="text" id="nomeDespesaEdit" name="nomeDespesaEdit"
+                                        placeholder="Ex: Tênis Nike" maxlength="40" class="form-control" required>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <label for="valorDespesaEdit">Valor</label>
+                                    <input type="text" id="valorDespesaEdit" name="valorDespesaEdit"
+                                        class="form-control" required>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <label for="opcaoPagamentoEdit">Opção Pagamento</label>
+                                    <select name="opcaoPagamentoEdit" id="opcaoPagamentoEdit" class="form-control"
+                                        required>
+                                        <option value="">Escolha uma opção</option>
+                                        <option value="PIX">PIX</option>
+                                        <option value="CREDITO">Crédito</option>
+                                        <option value="DEBITO">Débito</option>
+                                        <option value="DINHEIRO">Dinheiro</option>
+                                        <option value="BOLETO">Boleto</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 mt-3">
+                                    <label for="dataInicioEdit">Data</label>
+                                    <input type="date" name="dataInicioEdit" id="dataInicioEdit" class="form-control"
+                                        required>
+                                </div>
+                                <div class="col-6 mt-3">
+                                    <label for="dataFimEdit">Data Fim <small>(opcional)</small></label>
+                                    <input type="date" name="dataFimEdit" id="dataFimEdit" class="form-control">
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <label for="tipoDespesaEdit">Tipo Despesa</label>
+                                    <select name="tipoDespesaEdit" id="tipoDespesaEdit" class="form-control" required>
+                                        <option value="">Escolha uma opção</option>
+                                        @foreach ($tiposDespesas as $item)
+                                            <option value="{{ $item->id_tipo }}">{{ $item->nome_gasto }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <label for="atrelamentoEdit">Atrelamento <small>(opcional)</small></label>
+                                    <select name="atrelamentoEdit" id="atrelamentoEdit" class="form-control">
+                                        <option value="">Escolha uma opção</option>
+                                        @foreach ($atrelamentos as $item)
+                                            <option value="{{ $item->id_atrelamento }}">{{ $item->nome_atrelamento }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch"
+                                            id="contaFixaEdit" name="contaFixaEdit">
+                                        <label class="form-check-label" for="contaFixaEdit">Clique aqui se essa for uma
+                                            conta
+                                            fixa</label>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 @endsection
 
 @section('script')
+
+    <script>
+        function modalEditaDespesa(descricao, valor, tipoDesp, dataInicio, dataFim, tipoPgto, atrelamento, despFixa) {
+            $("#nomeDespesaEdit").val(descricao);
+            $("#valorDespesaEdit").val(valor);
+            $("#opcaoPagamentoEdit").val(tipoPgto);
+            $("#dataInicioEdit").val(dataInicio);
+            $("#dataFimEdit").val(dataFim);
+            $("#tipoDespesaEdit").val(tipoDesp);
+            $("#atrelamentoEdit").val(atrelamento);
+
+            if(despFixa == 'S'){
+                $("#contaFixaEdit").val('on');
+            }
+        }
+    </script>
 
     <script>
         $(function() {
@@ -272,6 +375,13 @@
                 affixesStay: true
             });
             $('#valorDespesa').maskMoney({
+                prefix: 'R$ ',
+                allowNegative: true,
+                thousands: '.',
+                decimal: ',',
+                affixesStay: true
+            });
+            $('#valorDespesaEdit').maskMoney({
                 prefix: 'R$ ',
                 allowNegative: true,
                 thousands: '.',
