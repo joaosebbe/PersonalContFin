@@ -23,6 +23,11 @@ Route::post('/auth', [LoginController::class, 'auth'])->name('login.auth');
 Route::view('/inicio', 'inicio')->name('inicio')->middleware('auth.check');
 Route::get('/logout', [LoginController::class, 'destroy'])->name('logout');
 
-Route::view('/contas', 'contas');
+Route::get('/contas', [ContasController::class, 'carregaSelects']);
 
 Route::post('/alterarReceita', [ContasController::class, 'alterarReceita'])->name('alterarReceita');
+
+Route::post('/receitaUnica', [ContasController::class, 'insereReceitaUnica'])->name('insereReceitaUnica');
+Route::post('/tipoDespesa', [ContasController::class, 'insereTipoDespesa'])->name('insereTipoDespesa');
+Route::post('/atrelamento', [ContasController::class, 'insereAtrelamento'])->name('insereAtrelamento');
+Route::post('/despesa', [ContasController::class, 'insereDespesa'])->name('insereDespesa');
