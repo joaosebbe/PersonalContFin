@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'ControlFin - Início')
+@section('title', 'Início')
 
 @section('content')
 

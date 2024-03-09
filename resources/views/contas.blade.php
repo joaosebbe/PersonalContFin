@@ -1,10 +1,10 @@
 @extends('layouts.main')
 
-@section('title', 'ControlFin - Contas')
+@section('title', 'Contas')
 
 @section('content')
 
-    <div class="container mt-4">
+    <div class="container mt-5">
         <form method="POST" action="{{ route('alterarReceita') }}">
             @csrf
             <div class="row form-group">
@@ -52,7 +52,7 @@
                 </thead>
                 <tbody class="table-group-divider">
                     @foreach ($despesas as $despesa)
-                        @if (date('Y-m', strtotime($despesa->data_cobranca)) == date('Y-m'))
+                        @if (date('Y-m', strtotime($despesa->data)) == date('Y-m') || (date('Y-m', strtotime($despesa->data_cobranca)) == date('Y-m') && $despesa->data == ''))
                             @if ($despesa->receita_despesa == 'D')
                                 <tr data-bs-toggle="modal" data-bs-target="#modalEditaDespesa" onclick="modalEditaDespesa('{{ $despesa->descricao }}', '{{ $despesa->valor }}', '{{ $despesa->tipo_gasto }}', '{{ $despesa->data_inicio }}', '{{ $despesa->data_fim }}', '{{ $despesa->tipo_pagamento }}', '{{ $despesa->atrelamento }}', '{{ $despesa->despesa_fixa }}')"
                                     class="table-danger" style="cursor: pointer">
@@ -68,7 +68,7 @@
                                 @endif
                             </td>
                             <td>{{ $despesa->tipo_pagamento }}</td>
-                            <td>{{ $despesa->parcela }}</td>
+                            <td>{{ $despesa->parcela_atual }}</td>
                             <td>{{ date('m/Y', strtotime($despesa->data_inicio)) }}</td>
                             <td>{{ $despesa->data_fim != '' ? date('m/Y', strtotime($despesa->data_fim)) : '' }}
                             </td>

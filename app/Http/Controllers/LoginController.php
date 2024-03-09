@@ -24,6 +24,8 @@ class LoginController extends Controller
         //faz o login automatico pelo id
         Auth::loginUsingId($user->id);
 
+        session()->put('dataAnoMes', date('Y-m'));
+
         return redirect()->route('inicio')->with('success', 'Login feito com sucesso!');
         
     }

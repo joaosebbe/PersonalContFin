@@ -32,3 +32,5 @@ Route::post('/tipoDespesa', [ContasController::class, 'insereTipoDespesa'])->nam
 Route::post('/atrelamento', [ContasController::class, 'insereAtrelamento'])->name('insereAtrelamento');
 Route::post('/despesa', [ContasController::class, 'insereDespesa'])->name('insereDespesa');
 Route::post('/editaDespesa', [ContasController::class, 'editaDespesa'])->name('editaDespesa');
+
+Route::post('/alterarData', [ContasController::class, 'alterarData'])->name('alterarData');

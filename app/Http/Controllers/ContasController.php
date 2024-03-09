@@ -17,11 +17,15 @@ class ContasController extends Controller
         $despesas = DB::table('tab_despesas')
             ->leftJoin('tab_tiposgastos', 'tab_despesas.tipo_gasto', '=', 'tab_tiposgastos.id_tipo')
             ->leftJoin('tab_atrelamento', 'tab_despesas.atrelamento', '=', 'tab_atrelamento.id_atrelamento')
+            ->leftJoin('tab_parcelas', 'tab_despesas.id_despesa', '=', 'tab_parcelas.id_despesa')
             ->where('tab_despesas.usuario', '=', auth()->user()->id)
             ->select(
                 'tab_despesas.*',
                 'tab_tiposgastos.*',
-                'tab_atrelamento.*'
+                'tab_atrelamento.*',
+                'tab_parcelas.data',
+                'tab_parcelas.parcela_atual',
+                'tab_parcelas.valor_quebrado'
             )
             ->get();
 
@@ -98,20 +102,25 @@ class ContasController extends Controller
             $valorMensal = $despesa / $diferenca;
             $dataCobranca = date('Y-m-d', strtotime($request->dataInicio));
 
+            $idDespesa = DB::table('tab_despesas')->insertGetId([
+                'usuario' => auth()->user()->id,
+                'descricao' => $request->nomeDespesa,
+                'valor' => $despesa,
+                'tipo_gasto' => $request->tipoDespesa,
+                'data_cobranca' => $dataCobranca,
+                'data_inicio' => date('Y-m-d', strtotime($request->dataInicio)),
+                'data_fim' => (($dataFim != '') ? date('Y-m-d', strtotime($dataFim)) : date('Y-m-d')),
+                'tipo_pagamento' => $request->opcaoPagamento,
+                'atrelamento' => $request->atrelamento,
+                'nmr_parcelas' => $diferenca,
+            ]);
+
             for($i = 0; $i < $diferenca; $i++){
                 $dataCobranca = date('Y-m-d', strtotime($request->dataInicio . ' +' . $i . ' month'));
-                DB::table('tab_despesas')->insert([
-                    'usuario' => auth()->user()->id,
-                    'descricao' => $request->nomeDespesa,
-                    'valor' => $despesa,
-                    'tipo_gasto' => $request->tipoDespesa,
-                    'data_cobranca' => $dataCobranca,
-                    'data_inicio' => date('Y-m-d', strtotime($request->dataInicio)),
-                    'data_fim' => (($dataFim != '') ? date('Y-m-d', strtotime($dataFim)) : date('Y-m-d')),
-                    'tipo_pagamento' => $request->opcaoPagamento,
-                    'atrelamento' => $request->atrelamento,
-                    'nmr_parcelas' => $diferenca,
-                    'parcela' => $i + 1,
+                DB::table('tab_parcelas')->insert([
+                    'id_despesa' => $idDespesa,
+                    'data' => $dataCobranca,
+                    'parcela_atual' => $i + 1,
                     'valor_quebrado' => $valorMensal,
                 ]);
             }
@@ -130,6 +139,12 @@ class ContasController extends Controller
         }
 
         return redirect('/contas');
+    }
+
+    public function alterarData(Request $request){
+        session()->put('dataAnoMes', $request->novaData);
+
+        return redirect()->back();
     }
 
     public static function retiraMascaraDinheiro($valor)
