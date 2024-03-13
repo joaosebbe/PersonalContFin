@@ -9,6 +9,20 @@ use Illuminate\Support\Carbon;
 
 class ContasController extends Controller
 {
+    public function retornaDespesas()
+    {
+        $despesas = DB::select("
+        SELECT d.valor, d.data_cobranca, p.data, p.parcela_atual, p.valor_quebrado, t.nome_gasto
+        FROM tab_despesas d 
+        LEFT JOIN tab_parcelas p ON d.id_despesa = p.id_despesa AND p.data LIKE '" . session()->get('dataAnoMes') . "%'
+        LEFT JOIN tab_tiposgastos t ON t.id_tipo = d.tipo_gasto
+        WHERE d.receita_despesa = 'D' AND d.usuario = '" . auth()->user()->id ."'
+        ");
+
+        // return dd($despesas);
+        return view('inicio', compact('despesas'));
+    }
+
     public function carregaSelects()
     {
         $anoMesAtual = date('Y-m');
@@ -93,10 +107,10 @@ class ContasController extends Controller
             $diferenca = $dataInicio->diffInMonths($dataFim);
 
             $dataFim = $request->dataFim;
-            if(date('Y-m', strtotime($request->dataInicio)) > date('Y-m', strtotime($dataFim))){
+            if (date('Y-m', strtotime($request->dataInicio)) > date('Y-m', strtotime($dataFim))) {
                 $dataFim = $request->dataInicio;
             }
-            if(date('Y-m', strtotime($request->dataInicio)) == date('Y-m', strtotime($dataFim))){
+            if (date('Y-m', strtotime($request->dataInicio)) == date('Y-m', strtotime($dataFim))) {
                 $diferenca = 1;
             }
             $valorMensal = $despesa / $diferenca;
@@ -115,7 +129,7 @@ class ContasController extends Controller
                 'nmr_parcelas' => $diferenca,
             ]);
 
-            for($i = 0; $i < $diferenca; $i++){
+            for ($i = 0; $i < $diferenca; $i++) {
                 $dataCobranca = date('Y-m-d', strtotime($request->dataInicio . ' +' . $i . ' month'));
                 DB::table('tab_parcelas')->insert([
                     'id_despesa' => $idDespesa,
@@ -141,7 +155,8 @@ class ContasController extends Controller
         return redirect('/contas');
     }
 
-    public function alterarData(Request $request){
+    public function alterarData(Request $request)
+    {
         session()->put('dataAnoMes', $request->novaData);
 
         return redirect()->back();

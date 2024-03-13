@@ -26,7 +26,10 @@ class LoginController extends Controller
 
         session()->put('dataAnoMes', date('Y-m'));
 
-        return redirect()->route('inicio')->with('success', 'Login feito com sucesso!');
+        // $despesas = ContasController::retornaDespesas($user->id);
+
+        return redirect('/inicio');
+        // return dd($despesas);
         
     }
 
