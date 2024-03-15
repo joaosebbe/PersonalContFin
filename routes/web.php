@@ -20,11 +20,12 @@ Route::get('/', function () {
 })->name('login');
 
 Route::post('/auth', [LoginController::class, 'auth'])->name('login.auth');
-Route::get('/inicio', [ContasController::class, 'retornaDespesas'])->middleware('auth.check');
-// Route::view('/inicio', 'inicio')->name('inicio');
+
 Route::get('/logout', [LoginController::class, 'destroy'])->name('logout');
 
+Route::get('/inicio', [ContasController::class, 'retornaDespesas'])->middleware('auth.check');
 Route::get('/contas', [ContasController::class, 'carregaSelects']);
+Route::get('/checklist', [ContasController::class, 'carregaChecklist']);
 
 Route::post('/alterarReceita', [ContasController::class, 'alterarReceita'])->name('alterarReceita');
 
