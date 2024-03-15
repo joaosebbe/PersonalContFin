@@ -36,7 +36,8 @@
                     data-bs-target="#modalNovaDespesa" style="width: 100%">Nova Despesa</button>
             </div>
         </div>
-        <p class="mt-3" style="color: rgb(165, 164, 164)"><small>Obs: Clique na linha da despesa para edita-la.</small></p>
+        <p class="mt-3" style="color: rgb(165, 164, 164)"><small>Obs: Clique na linha da despesa para edita-la.</small>
+        </p>
 
         <div class="row mt-1">
             <table class="table table-striped table-hover table-sm" style="zoom: 70%">
@@ -52,28 +53,27 @@
                 </thead>
                 <tbody class="table-group-divider">
                     @foreach ($despesas as $despesa)
-                        @if (date('Y-m', strtotime($despesa->data)) == date('Y-m') || (date('Y-m', strtotime($despesa->data_cobranca)) == date('Y-m') && $despesa->data == ''))
-                            @if ($despesa->receita_despesa == 'D')
-                                <tr data-bs-toggle="modal" data-bs-target="#modalEditaDespesa" onclick="modalEditaDespesa('{{ $despesa->descricao }}', '{{ $despesa->valor }}', '{{ $despesa->tipo_gasto }}', '{{ $despesa->data_inicio }}', '{{ $despesa->data_fim }}', '{{ $despesa->tipo_pagamento }}', '{{ $despesa->atrelamento }}', '{{ $despesa->despesa_fixa }}')"
-                                    class="table-danger" style="cursor: pointer">
-                            @else
-                                <tr class="table-success" style="cursor: pointer">
-                            @endif
-                            <td>{{ $despesa->descricao }}</td>
-                            <td>R$
-                                @if ($despesa->tipo_pagamento == 'CREDITO' && intval($despesa->nmr_parcelas) > 1)
-                                    {{ number_format($despesa->valor_quebrado, 2, ',', '.') }}
-                                @else
-                                    {{ number_format($despesa->valor, 2, ',', '.') }}
-                                @endif
-                            </td>
-                            <td>{{ $despesa->tipo_pagamento }}</td>
-                            <td>{{ $despesa->parcela_atual }}</td>
-                            <td>{{ date('m/Y', strtotime($despesa->data_inicio)) }}</td>
-                            <td>{{ $despesa->data_fim != '' ? date('m/Y', strtotime($despesa->data_fim)) : '' }}
-                            </td>
-                            </tr>
+                        @if ($despesa->receita_despesa == 'D')
+                            <tr data-bs-toggle="modal" data-bs-target="#modalEditaDespesa"
+                                onclick="modalEditaDespesa('{{ $despesa->id_despesa }}', '{{ $despesa->descricao }}', '{{ $despesa->valor }}', '{{ $despesa->tipo_gasto }}', '{{ $despesa->data_inicio }}', '{{ $despesa->data_fim }}', '{{ $despesa->tipo_pagamento }}', '{{ $despesa->atrelamento }}', '{{ $despesa->despesa_fixa }}')"
+                                class="table-danger" style="cursor: pointer">
+                        @else
+                            <tr class="table-success" style="cursor: pointer">
                         @endif
+                        <td>{{ $despesa->descricao }}</td>
+                        <td>R$
+                            @if ($despesa->tipo_pagamento == 'CREDITO' && intval($despesa->nmr_parcelas) > 1)
+                                {{ number_format($despesa->valor_quebrado, 2, ',', '.') }}
+                            @else
+                                {{ number_format($despesa->valor, 2, ',', '.') }}
+                            @endif
+                        </td>
+                        <td>{{ $despesa->tipo_pagamento }}</td>
+                        <td>{{ $despesa->parcela_atual }}</td>
+                        <td>{{ (($despesa->data_inicio != '') ? date('m/Y', strtotime($despesa->data_inicio)) : '') }}</td>
+                        <td>{{ $despesa->data_fim != '' ? date('m/Y', strtotime($despesa->data_fim)) : '' }}
+                        </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -115,7 +115,8 @@
             </div>
         </div>
         <!-- Modal Tipo Despesa -->
-        <div class="modal fade" id="modalTipoDespesa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="modalTipoDespesa" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -209,7 +210,7 @@
                                     </select>
                                 </div>
                                 <div class="col-6 mt-3">
-                                    <label for="dataInicio">Data</label>
+                                    <label for="dataInicio">Data Cobrança</label>
                                     <input type="date" name="dataInicio" id="dataInicio" class="form-control"
                                         required>
                                 </div>
@@ -266,6 +267,7 @@
                     <div class="modal-body">
                         <form method="POST" action="{{ route('editaDespesa') }}">
                             @csrf
+                            <input type="hidden" name="idDespesaEdit" id="idDespesaEdit">
                             <div class="row form-group">
                                 <div class="col-12">
                                     <label for="nomeDespesaEdit">Despesa</label>
@@ -290,7 +292,7 @@
                                     </select>
                                 </div>
                                 <div class="col-6 mt-3">
-                                    <label for="dataInicioEdit">Data</label>
+                                    <label for="dataInicioEdit">Data Cobrança</label>
                                     <input type="date" name="dataInicioEdit" id="dataInicioEdit" class="form-control"
                                         required>
                                 </div>
@@ -343,7 +345,8 @@
 @section('script')
 
     <script>
-        function modalEditaDespesa(descricao, valor, tipoDesp, dataInicio, dataFim, tipoPgto, atrelamento, despFixa) {
+        function modalEditaDespesa(id, descricao, valor, tipoDesp, dataInicio, dataFim, tipoPgto, atrelamento, despFixa) {
+            $("#idDespesaEdit").val(id);
             $("#nomeDespesaEdit").val(descricao);
             $("#valorDespesaEdit").val(valor);
             $("#opcaoPagamentoEdit").val(tipoPgto);
@@ -352,8 +355,8 @@
             $("#tipoDespesaEdit").val(tipoDesp);
             $("#atrelamentoEdit").val(atrelamento);
 
-            if(despFixa == 'S'){
-                $("#contaFixaEdit").val('on');
+            if (despFixa == 'S') {
+                $('#contaFixaEdit').prop('checked', true);
             }
         }
     </script>

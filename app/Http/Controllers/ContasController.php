@@ -11,12 +11,13 @@ class ContasController extends Controller
 {
     public function retornaDespesas()
     {
+        $anoMes = session()->get('dataAnoMes');
         $despesas = DB::select("
-        SELECT d.valor, d.data_cobranca, p.data, p.parcela_atual, p.valor_quebrado, t.nome_gasto
+        SELECT SUM(CASE WHEN p.valor_quebrado IS NOT NULL THEN p.valor_quebrado ELSE d.valor END) AS total_valor, t.nome_gasto
         FROM tab_despesas d 
-        LEFT JOIN tab_parcelas p ON d.id_despesa = p.id_despesa AND p.data LIKE '" . session()->get('dataAnoMes') . "%'
+        LEFT JOIN tab_parcelas p ON d.id_despesa = p.id_despesa
         LEFT JOIN tab_tiposgastos t ON t.id_tipo = d.tipo_gasto
-        WHERE d.receita_despesa = 'D' AND d.usuario = '" . auth()->user()->id ."'
+        WHERE d.receita_despesa = 'D' AND d.usuario = '" . auth()->user()->id . "' AND ((CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMes%' ELSE d.data_cobranca like '$anoMes%' END) OR d.despesa_fixa = 'S') GROUP BY d.tipo_gasto, t.nome_gasto;
         ");
 
         // return dd($despesas);
@@ -25,23 +26,15 @@ class ContasController extends Controller
 
     public function carregaSelects()
     {
-        $anoMesAtual = date('Y-m');
+        $anoMes = session()->get('dataAnoMes');
         $tiposDespesas = DB::select('select * from tab_tiposgastos where id_usuario = ?', [auth()->user()->id]);
         $atrelamentos = DB::select('select * from tab_atrelamento where id_usuario = ?', [auth()->user()->id]);
-        $despesas = DB::table('tab_despesas')
-            ->leftJoin('tab_tiposgastos', 'tab_despesas.tipo_gasto', '=', 'tab_tiposgastos.id_tipo')
-            ->leftJoin('tab_atrelamento', 'tab_despesas.atrelamento', '=', 'tab_atrelamento.id_atrelamento')
-            ->leftJoin('tab_parcelas', 'tab_despesas.id_despesa', '=', 'tab_parcelas.id_despesa')
-            ->where('tab_despesas.usuario', '=', auth()->user()->id)
-            ->select(
-                'tab_despesas.*',
-                'tab_tiposgastos.*',
-                'tab_atrelamento.*',
-                'tab_parcelas.data',
-                'tab_parcelas.parcela_atual',
-                'tab_parcelas.valor_quebrado'
-            )
-            ->get();
+        $despesas = DB::select("SELECT d.*, t.*, a.*, p.data, p.parcela_atual, p.valor_quebrado 
+        FROM tab_despesas d 
+        LEFT JOIN tab_tiposgastos t ON t.id_tipo = d.tipo_gasto
+        LEFT JOIN tab_atrelamento a ON a.id_atrelamento = d.atrelamento
+        LEFT JOIN tab_parcelas p ON p.id_despesa = d.id_despesa
+        WHERE d.usuario = '" . auth()->user()->id . "' AND ((CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMes%' ELSE d.data_cobranca like '$anoMes%' END) OR d.despesa_fixa = 'S')");
 
         return view('contas', compact('tiposDespesas', 'atrelamentos', 'despesas'));
     }
@@ -139,17 +132,94 @@ class ContasController extends Controller
                 ]);
             }
         } else {
+            $data = date('Y-m-d', strtotime($request->dataInicio));
+            if($request->contaFixa == 'on'){
+                $data = null;
+            }
             DB::table('tab_despesas')->insert([
                 'usuario' => auth()->user()->id,
                 'descricao' => $request->nomeDespesa,
                 'valor' => $despesa,
                 'tipo_gasto' => $request->tipoDespesa,
-                'data_cobranca' => date('Y-m-d', strtotime($request->dataInicio)),
-                'data_inicio' => date('Y-m-d', strtotime($request->dataInicio)),
+                'data_cobranca' => $data,
+                'data_inicio' => $data,
                 'tipo_pagamento' => $request->opcaoPagamento,
                 'despesa_fixa' => (($request->contaFixa == 'on') ? 'S' : 'N'),
                 'atrelamento' => $request->atrelamento,
             ]);
+        }
+
+        return redirect('/contas');
+    }
+
+    public function editaDespesa(Request $request)
+    {
+        $despesa = ContasController::retiraMascaraDinheiro($request->valorDespesaEdit);
+        $idDespesa = $request->idDespesaEdit;
+
+        if ($request->opcaoPagamentoEdit == 'CREDITO') {
+            $dataInicio = Carbon::parse($request->dataInicioEdit);
+            $dataFim = Carbon::parse($request->dataFimEdit);
+
+            // Calcula a diferença entre as datas
+            $diferenca = $dataInicio->diffInMonths($dataFim) + 1;
+
+            $dataFim = $request->dataFimEdit;
+            if (date('Y-m', strtotime($request->dataInicioEdit)) > date('Y-m', strtotime($dataFim))) {
+                $dataFim = $request->dataInicioEdit;
+            }
+            if (date('Y-m', strtotime($request->dataInicioEdit)) == date('Y-m', strtotime($dataFim))) {
+                $diferenca = 1;
+            }
+            $valorMensal = $despesa / $diferenca;
+            $dataCobranca = date('Y-m-d', strtotime($request->dataInicioEdit));
+
+            DB::table('tab_despesas')
+                ->where('id_despesa', $idDespesa)
+                ->limit(1)
+                ->update(array(
+                    'descricao' => $request->nomeDespesaEdit,
+                    'valor' => $despesa,
+                    'tipo_gasto' => $request->tipoDespesaEdit,
+                    'data_cobranca' => $dataCobranca,
+                    'data_inicio' => date('Y-m-d', strtotime($request->dataInicioEdit)),
+                    'data_fim' => (($dataFim != '') ? date('Y-m-d', strtotime($dataFim)) : date('Y-m-d')),
+                    'tipo_pagamento' => $request->opcaoPagamentoEdit,
+                    'atrelamento' => $request->atrelamentoEdit,
+                    'nmr_parcelas' => $diferenca,
+                ));
+
+            DB::table('tab_parcelas')
+                ->where('id_despesa', $idDespesa)
+                ->delete();
+
+            for ($i = 0; $i < $diferenca; $i++) {
+                $dataCobranca = date('Y-m-d', strtotime($request->dataInicioEdit . ' +' . $i . ' month'));
+                DB::table('tab_parcelas')->insert([
+                    'id_despesa' => $idDespesa,
+                    'data' => $dataCobranca,
+                    'parcela_atual' => $i + 1,
+                    'valor_quebrado' => $valorMensal,
+                ]);
+            }
+        } else {
+            $data = date('Y-m-d', strtotime($request->dataInicioEdit));
+            if($request->contaFixaEdit == 'on'){
+                $data = null;
+            }
+            DB::table('tab_despesas')
+                ->where('id_despesa', $idDespesa)
+                ->limit(1)
+                ->update(array(
+                    'descricao' => $request->nomeDespesaEdit,
+                    'valor' => $despesa,
+                    'tipo_gasto' => $request->tipoDespesaEdit,
+                    'data_cobranca' => $data,
+                    'data_inicio' => $data,
+                    'tipo_pagamento' => $request->opcaoPagamentoEdit,
+                    'despesa_fixa' => (($request->contaFixaEdit == 'on') ? 'S' : 'N'),
+                    'atrelamento' => $request->atrelamentoEdit,
+                ));
         }
 
         return redirect('/contas');
@@ -164,10 +234,14 @@ class ContasController extends Controller
 
     public static function retiraMascaraDinheiro($valor)
     {
-        $novoValor = trim(str_replace('R$', '', $valor));
-        $novoValor = trim(str_replace('.', '', $novoValor));
-        $novoValor = floatval(trim(str_replace(',', '.', $novoValor)));
+        if (strpos($valor, 'R$') !== false) {
+            $novoValor = trim(str_replace('R$', '', $valor));
+            $novoValor = trim(str_replace('.', '', $novoValor));
+            $novoValor = floatval(trim(str_replace(',', '.', $novoValor)));
 
-        return $novoValor;
+            return $novoValor;
+        }
+
+        return $valor;
     }
 }

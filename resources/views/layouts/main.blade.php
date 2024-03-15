@@ -17,12 +17,12 @@
 
 </head>
 
-<body style="padding: 10px; background-color: rgb(196, 255, 196)">
+<body style="padding: 10px; background-color:rgb(228, 228, 228)">
     <header>
         <a role="button"
             style="float: left;position: fixed; top: 0px; left: 0px; z-index: 5; background-color: #5c5cf9; color: white; text-decoration: none; padding: 5px; border-radius: 0 0 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);"
             data-bs-toggle="modal"
-            data-bs-target="#modalData"><span><strong>{{ !session()->get('dataAnoMes') ? date('m/Y') : date('m/Y', strtotime(session()->get('dataAnoMes'))) }}</strong></span></a>
+            data-bs-target="#modalData"><span><strong>{{ !session()->get('dataAnoMes') ? date('m/Y') : date('m/Y', strtotime(session()->get('dataAnoMes'))) }}</strong>&nbsp;&nbsp;<i class="fas fa-calendar"></i></span></a>
 
         <!-- Modal Data -->
         <div class="modal fade" id="modalData" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -54,7 +54,7 @@
             <div class="container-fluid">
                 <a class="navbar-brand text-primary" href="/contas"><i class="fas fa-chart-bar fa-lg"></i></a>
                 <a class="navbar-brand text-primary" href="/inicio"><i class="fas fa-lg fa-home"></i></a>
-                <a class="navbar-brand text-primary" href="#"><i class="far fa-check-square fa-lg"></i></a>
+                <a class="navbar-brand text-primary" href="/checklist"><i class="far fa-check-square fa-lg"></i></a>
             </div>
         </nav>
     </header>
