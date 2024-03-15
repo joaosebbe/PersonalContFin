@@ -1,0 +1,27 @@
+{
+    "name": "MeuContFin - Controle Financeiro Pessoal",
+    "short_name": "MeuContFin App",
+    "start_url": "index.php",
+    "display": "standalone",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
+    "orientation": "portrait",
+    "icons": [
+      {
+        "src": "img/logo.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "img/logo.png",
+        "type": "image/png",
+        "sizes": "180x180"
+      },
+      {
+        "src": "img/logo.png",
+        "type": "image/png",
+        "sizes": "152x152"
+      }
+      
+    ]
+  }
