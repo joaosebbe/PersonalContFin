@@ -13,7 +13,8 @@
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-    <link rel="apple-touch-icon" href="img/logo.png">
+    <link rel="icon" href="{{ url('/img/logo.png') }}" />
+    <link rel="apple-touch-icon" href="{{ url('/img/logo.png') }}">
     <link rel="manifest" href="manifest.json">
 
     @yield('style')

@@ -7,7 +7,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <title>ControlFin - Login</title>
+    <title>MeuContFin - Login</title>
+    <link rel="icon" href="{{ url('/img/logo.png') }}" />
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sign-in/">
 
