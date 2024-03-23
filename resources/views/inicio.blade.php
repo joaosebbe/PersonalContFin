@@ -47,7 +47,7 @@
                 </span>
                 <br>
                 <span>
-                    Resultante: R$ <span class="valorResultante">{{ number_format((auth()->user()->valor_receita - $valorTotalDesp), 2 , ',', '.') }}</span>
+                    Restante: R$ <span class="valorResultante">{{ number_format((auth()->user()->valor_receita - $valorTotalDesp), 2 , ',', '.') }}</span>
                 </span>
             </div>
         </div>
