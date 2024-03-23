@@ -16,7 +16,7 @@ class ChecklistController extends Controller
         SELECT SUM(CASE WHEN p.valor_quebrado IS NOT NULL THEN p.valor_quebrado ELSE d.valor END) AS total_valor,d.id_despesa, a.nome_atrelamento, d.descricao FROM tab_despesas d LEFT JOIN tab_tiposgastos t ON t.id_tipo = d.tipo_gasto LEFT JOIN tab_atrelamento a ON a.id_atrelamento = d.atrelamento LEFT JOIN tab_parcelas p ON p.id_despesa = d.id_despesa WHERE d.usuario = '" . auth()->user()->id . "' AND d.tipo_pagamento = 'CREDITO' AND (CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMes%' ELSE d.data_cobranca like '$anoMes%' END) GROUP BY d.atrelamento, d.id_despesa, a.nome_atrelamento, d.descricao
         ");
 
-        $despFixa = DB::select("SELECT * FROM tab_despesas WHERE despesa_fixa = 'S'");
+        $despFixa = DB::select("SELECT * FROM tab_despesas WHERE despesa_fixa = 'S' AND usuario = '" . auth()->user()->id . "'");
 
         // return dd($despCredito);
         return view('checklist', compact('despCredito','despFixa'));
