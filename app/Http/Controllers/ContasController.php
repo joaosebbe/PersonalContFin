@@ -111,7 +111,7 @@ class ContasController extends Controller
             $dataFim = Carbon::parse($request->dataFim);
 
             // Calcula a diferença entre as datas
-            $diferenca = $dataInicio->diffInMonths($dataFim);
+            $diferenca = $dataInicio->diffInMonths($dataFim) + 1;
 
             $dataFim = $request->dataFim;
             if (date('Y-m', strtotime($request->dataInicio)) > date('Y-m', strtotime($dataFim))) {
@@ -236,6 +236,20 @@ class ContasController extends Controller
                 ));
         }
 
+        return redirect('/contas');
+    }
+
+    public function excluiDespesa(Request $request) {
+        if($request->idDespesaExcluir){
+            DB::table('tab_despesas')
+                ->where('id_despesa', $request->idDespesaExcluir)
+                ->delete();
+            if($request->tpPgto == 'CREDITO'){
+                DB::table('tab_parcelas')
+                ->where('id_despesa', $request->idDespesaExcluir)
+                ->delete();
+            }
+        }
         return redirect('/contas');
     }
 

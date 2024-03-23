@@ -82,7 +82,7 @@
                 pieHole: 0.5, // Define o tamanho do buraco no meio do gráfico de rosca
                 pieSliceText: 'value', // Exibe os valores dos dados nas fatias do gráfico
                 legend: {
-                    position: 'bottom' // Posiciona a legenda na parte inferior do gráfico
+                    position: 'right' // Posiciona a legenda na parte inferior do gráfico
                 },
                 backgroundColor: 'transparent', // Define o fundo do gráfico como transparente
                 chartArea: {

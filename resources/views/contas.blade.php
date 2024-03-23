@@ -330,15 +330,25 @@
                                 </div>
                             </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    <div class="modal-footer" style="display: block">
+                        
+                        <button type="submit" class="btn btn-primary" style="float: right">Salvar</button>
                         </form>
+
+                        <form action="{{ route('excluiDespesa') }}" method="post">
+                            @csrf
+                            <input type="hidden" name="idDespesaExcluir" id="idDespesaExcluir">
+                            <input type="hidden" name="tpPgto" id="tpPgto">
+                            <button type="submit" class="btn btn-danger" style="float: left">Excluir Despesa</button>
+                        </form>
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    
 
 @endsection
 
@@ -354,6 +364,10 @@
             $("#dataFimEdit").val(dataFim);
             $("#tipoDespesaEdit").val(tipoDesp);
             $("#atrelamentoEdit").val(atrelamento);
+
+            //Define para form de excluir
+            $("#idDespesaExcluir").val(id);
+            $("#tpPgto").val(tipoPgto);
 
             if (despFixa == 'S') {
                 $('#contaFixaEdit').prop('checked', true);
