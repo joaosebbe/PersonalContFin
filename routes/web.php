@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\ContasController;
+use App\Http\Controllers\DespesasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ReceitaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,20 +23,23 @@ Route::get('/', function () {
 })->name('login');
 
 Route::post('/auth', [LoginController::class, 'auth'])->name('login.auth');
-
 Route::get('/logout', [LoginController::class, 'destroy'])->name('logout');
 
-Route::get('/inicio', [ContasController::class, 'retornaDespesas'])->middleware('auth.check');
-Route::get('/contas', [ContasController::class, 'carregaSelects']);
-Route::get('/checklist', [ContasController::class, 'carregaChecklist']);
 
-Route::post('/alterarReceita', [ContasController::class, 'alterarReceita'])->name('alterarReceita');
-
-Route::post('/receitaUnica', [ContasController::class, 'insereReceitaUnica'])->name('insereReceitaUnica');
+Route::get('/contas', [ContasController::class, 'carregaContas']);
 Route::post('/tipoDespesa', [ContasController::class, 'insereTipoDespesa'])->name('insereTipoDespesa');
 Route::post('/atrelamento', [ContasController::class, 'insereAtrelamento'])->name('insereAtrelamento');
-Route::post('/despesa', [ContasController::class, 'insereDespesa'])->name('insereDespesa');
-Route::post('/editaDespesa', [ContasController::class, 'editaDespesa'])->name('editaDespesa');
-Route::post('/excluiDespesa', [ContasController::class, 'excluiDespesa'])->name('excluiDespesa');
-
 Route::post('/alterarData', [ContasController::class, 'alterarData'])->name('alterarData');
+
+
+Route::get('/inicio', [DespesasController::class, 'retornaDespesas'])->middleware('auth.check');
+Route::post('/despesa', [DespesasController::class, 'insereDespesa'])->name('insereDespesa');
+Route::post('/editaDespesa', [DespesasController::class, 'editaDespesa'])->name('editaDespesa');
+Route::post('/excluiDespesa', [DespesasController::class, 'excluiDespesa'])->name('excluiDespesa');
+
+
+Route::post('/alterarReceita', [ReceitaController::class, 'alterarReceita'])->name('alterarReceita');
+Route::post('/receitaUnica', [ReceitaController::class, 'insereReceitaUnica'])->name('insereReceitaUnica');
+
+
+Route::get('/checklist', [ChecklistController::class, 'carregaChecklist']);
