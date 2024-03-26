@@ -195,7 +195,7 @@
                                 </div>
                                 <div class="col-12 mt-3">
                                     <label for="valorDespesa">Valor</label>
-                                    <input type="text" id="valorDespesa" name="valorDespesa" class="form-control"
+                                    <input type="text" id="valorDespesa" name="valorDespesa" class="form-control money"
                                         required>
                                 </div>
                                 <div class="col-12 mt-3">
@@ -376,6 +376,9 @@
     </script>
 
     <script>
+        $(document).ready(function(){
+            $('.money').mask('000.000.000.000.000,00', {reverse: true});
+        });
         $(function() {
             $('#receita').maskMoney({
                 prefix: 'R$ ',
@@ -391,13 +394,13 @@
                 decimal: ',',
                 affixesStay: true
             });
-            $('#valorDespesa').maskMoney({
-                prefix: 'R$ ',
-                allowNegative: true,
-                thousands: '.',
-                decimal: ',',
-                affixesStay: true
-            });
+            // $('#valorDespesa').maskMoney({
+            //     prefix: 'R$ ',
+            //     allowNegative: true,
+            //     thousands: '.',
+            //     decimal: ',',
+            //     affixesStay: true
+            // });
             $('#valorDespesaEdit').maskMoney({
                 prefix: 'R$ ',
                 allowNegative: true,

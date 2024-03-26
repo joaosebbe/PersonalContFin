@@ -19,6 +19,7 @@ class ChecklistController extends Controller
         LEFT JOIN tab_parcelas p ON p.id_despesa = d.id_despesa 
         LEFT JOIN tab_pagamentos pg ON (pg.id_atrelamento = d.atrelamento OR pg.id_despesa = d.id_despesa) AND pg.data_pgto LIKE '$anoMes%'
         WHERE d.usuario = '" . auth()->user()->id . "'
+        AND d.receita_despesa = 'D'
         AND (CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMes%' ELSE d.data_cobranca like '$anoMes%' OR (d.data_cobranca IS NULL AND d.atrelamento <> '') END) 
         GROUP BY d.atrelamento ORDER BY nome_atrelamento");
 
