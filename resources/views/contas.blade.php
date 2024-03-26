@@ -10,7 +10,7 @@
             <div class="row form-group">
                 <div class="col-9">
                     <label for="receita">Receita Fixa Mensal</label>
-                    <input type="text" id="receita" name="receita" class="form-control"
+                    <input type="text" id="receita" name="receita" class="form-control money"
                         value="{{ auth()->user()->valor_receita }}">
                 </div>
                 <div class="col-3">
@@ -101,7 +101,7 @@
                                 </div>
                                 <div class="col-12 mt-3">
                                     <label for="receitaUnica">Valor Receita</label>
-                                    <input type="text" id="receitaUnica" name="receitaUnica" class="form-control"
+                                    <input type="text" id="receitaUnica" name="receitaUnica" class="form-control money"
                                         required>
                                 </div>
                             </div>
@@ -277,7 +277,7 @@
                                 <div class="col-12 mt-3">
                                     <label for="valorDespesaEdit">Valor</label>
                                     <input type="text" id="valorDespesaEdit" name="valorDespesaEdit"
-                                        class="form-control" required>
+                                        class="form-control money" required>
                                 </div>
                                 <div class="col-12 mt-3">
                                     <label for="opcaoPagamentoEdit">Opção Pagamento</label>
@@ -380,20 +380,20 @@
             $('.money').mask('000.000.000.000.000,00', {reverse: true});
         });
         $(function() {
-            $('#receita').maskMoney({
-                prefix: 'R$ ',
-                allowNegative: true,
-                thousands: '.',
-                decimal: ',',
-                affixesStay: true
-            });
-            $('#receitaUnica').maskMoney({
-                prefix: 'R$ ',
-                allowNegative: true,
-                thousands: '.',
-                decimal: ',',
-                affixesStay: true
-            });
+            // $('#receita').maskMoney({
+            //     prefix: 'R$ ',
+            //     allowNegative: true,
+            //     thousands: '.',
+            //     decimal: ',',
+            //     affixesStay: true
+            // });
+            // $('#receitaUnica').maskMoney({
+            //     prefix: 'R$ ',
+            //     allowNegative: true,
+            //     thousands: '.',
+            //     decimal: ',',
+            //     affixesStay: true
+            // });
             // $('#valorDespesa').maskMoney({
             //     prefix: 'R$ ',
             //     allowNegative: true,
@@ -401,13 +401,13 @@
             //     decimal: ',',
             //     affixesStay: true
             // });
-            $('#valorDespesaEdit').maskMoney({
-                prefix: 'R$ ',
-                allowNegative: true,
-                thousands: '.',
-                decimal: ',',
-                affixesStay: true
-            });
+            // $('#valorDespesaEdit').maskMoney({
+            //     prefix: 'R$ ',
+            //     allowNegative: true,
+            //     thousands: '.',
+            //     decimal: ',',
+            //     affixesStay: true
+            // });
         })
     </script>
 
