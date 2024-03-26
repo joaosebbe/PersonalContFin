@@ -43,3 +43,5 @@ Route::post('/receitaUnica', [ReceitaController::class, 'insereReceitaUnica'])->
 
 
 Route::get('/checklist', [ChecklistController::class, 'carregaChecklist']);
+Route::get('/pagaContaAtrelamento/{codAtrelamento}', [ChecklistController::class, 'pagaContaAtrelamento']);
+Route::get('/pagaContaFixa/{codDespesa}', [ChecklistController::class, 'pagaContaFixa']);

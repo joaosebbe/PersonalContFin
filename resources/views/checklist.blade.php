@@ -21,14 +21,25 @@
                             <ul class="list-group rounded-0">
                                 @foreach ($despCredito as $dc)
                                     <li class="list-group-item border-0 d-flex align-items-center ps-0">
-                                        <input class="form-check-input me-3" type="checkbox" value="" />
+                                        @if ($dc->atrelamento != '')
+                                            <input class="form-check-input me-3" type="checkbox"
+                                                onclick="pagaContaAtrelamento('{{ $dc->atrelamento }}')" value=""
+                                                {{ $dc->id_atrelamento != '' ? 'checked' : '' }} />
+                                        @else
+                                            <input class="form-check-input me-3" type="checkbox"
+                                                onclick="pagaContaFixa('{{ $dc->id_despesa }}')" value=""
+                                                {{ $dc->despPgto != '' ? 'checked' : '' }} />
+                                        @endif
+
                                         {{ ($dc->nome_atrelamento != '' ? $dc->nome_atrelamento : $dc->descricao) . ' = R$ ' . number_format($dc->total_valor, 2, ',', '.') }}
                                     </li>
                                 @endforeach
 
                                 @foreach ($despFixa as $df)
                                     <li class="list-group-item border-0 d-flex align-items-center ps-0">
-                                        <input class="form-check-input me-3" type="checkbox" value="" />
+                                        <input class="form-check-input me-3" type="checkbox"
+                                            onclick="pagaContaFixa('{{ $df->id_despesa }}')" value=""
+                                            {{ $df->id_pgto != '' ? 'checked' : '' }} />
                                         {{ $df->descricao . ' = R$ ' . number_format($df->valor, 2, ',', '.') }}
                                     </li>
                                 @endforeach
@@ -46,6 +57,49 @@
 
 @section('script')
 
+    <script>
+        function pagaContaFixa(codDespesa) {
+            $.ajax({
+                url: '/pagaContaFixa/' + codDespesa,
+                method: 'GET',
+                dataType: 'json',
+                success: function(result) {
+                    if (result.resultado == 'pago') {
+                        Swal.fire({
+                            title: "Pagamento realizado!",
+                            icon: "success"
+                        });
+                    }else if(result.resultado == 'deletado'){
+                        Swal.fire({
+                            title: "Pagamento cancelado!",
+                            icon: "warning"
+                        });
+                    }
+                }
+            });
+        }
+
+        function pagaContaAtrelamento(codAtrelamento) {
+            $.ajax({
+                url: '/pagaContaAtrelamento/' + codAtrelamento,
+                method: 'GET',
+                dataType: 'json',
+                success: function(result) {
+                    if (result.resultado == 'pago') {
+                        Swal.fire({
+                            title: "Pagamento realizado!",
+                            icon: "success"
+                        });
+                    }else if(result.resultado == 'deletado'){
+                        Swal.fire({
+                            title: "Pagamento cancelado!",
+                            icon: "warning"
+                        });
+                    }
+                }
+            });
+        }
+    </script>
 
 
 @endsection
