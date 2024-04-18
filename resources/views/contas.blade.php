@@ -55,7 +55,7 @@
                     @foreach ($despesas as $despesa)
                         @if ($despesa->receita_despesa == 'D')
                             <tr data-bs-toggle="modal" data-bs-target="#modalEditaDespesa"
-                                onclick="modalEditaDespesa('{{ $despesa->id_despesa }}', '{{ $despesa->descricao }}', '{{ $despesa->valor }}', '{{ $despesa->tipo_gasto }}', '{{ $despesa->data_inicio }}', '{{ $despesa->data_fim }}', '{{ $despesa->tipo_pagamento }}', '{{ $despesa->atrelamento }}', '{{ $despesa->despesa_fixa }}')"
+                                onclick="modalEditaDespesa('{{ $despesa->id_despesa }}', '{{ $despesa->descricao }}', '{{ $despesa->valor }}', '{{ $despesa->tipo_gasto }}', '{{ $despesa->data_inicio }}', '{{ $despesa->nmr_parcelas }}', '{{ $despesa->tipo_pagamento }}', '{{ $despesa->atrelamento }}', '{{ $despesa->despesa_fixa }}')"
                                 class="table-danger" style="cursor: pointer">
                         @else
                             <tr class="table-success" style="cursor: pointer">
@@ -200,7 +200,7 @@
                                 </div>
                                 <div class="col-12 mt-3">
                                     <label for="opcaoPagamento">Opção Pagamento</label>
-                                    <select name="opcaoPagamento" id="opcaoPagamento" class="form-control" required>
+                                    <select name="opcaoPagamento" id="opcaoPagamento" class="form-control" onchange="apareceDataFim()" required>
                                         <option value="">Escolha uma opção</option>
                                         <option value="PIX">PIX</option>
                                         <option value="CREDITO">Crédito</option>
@@ -210,13 +210,13 @@
                                     </select>
                                 </div>
                                 <div class="col-6 mt-3">
-                                    <label for="dataInicio">Data Cobrança</label>
+                                    <label for="dataInicio">Primeira Cobrança</label>
                                     <input type="date" name="dataInicio" id="dataInicio" class="form-control"
                                         required>
                                 </div>
-                                <div class="col-6 mt-3">
-                                    <label for="dataFim">Data Fim <small>(opcional)</small></label>
-                                    <input type="date" name="dataFim" id="dataFim" class="form-control">
+                                <div class="col-6 mt-3" id="divDataFim" style="display: none">
+                                    <label for="dataFim">Parcelas</label>
+                                    <input type="number" min="1" name="dataFim" id="dataFim" class="form-control">
                                 </div>
                                 <div class="col-12 mt-3">
                                     <label for="tipoDespesa">Tipo Despesa</label>
@@ -281,7 +281,7 @@
                                 </div>
                                 <div class="col-12 mt-3">
                                     <label for="opcaoPagamentoEdit">Opção Pagamento</label>
-                                    <select name="opcaoPagamentoEdit" id="opcaoPagamentoEdit" class="form-control"
+                                    <select name="opcaoPagamentoEdit" id="opcaoPagamentoEdit" class="form-control" onchange="apareceDataFimEdit()"
                                         required>
                                         <option value="">Escolha uma opção</option>
                                         <option value="PIX">PIX</option>
@@ -292,13 +292,13 @@
                                     </select>
                                 </div>
                                 <div class="col-6 mt-3">
-                                    <label for="dataInicioEdit">Data Cobrança</label>
+                                    <label for="dataInicioEdit">Primeira Cobrança</label>
                                     <input type="date" name="dataInicioEdit" id="dataInicioEdit" class="form-control"
                                         required>
                                 </div>
-                                <div class="col-6 mt-3">
-                                    <label for="dataFimEdit">Data Fim <small>(opcional)</small></label>
-                                    <input type="date" name="dataFimEdit" id="dataFimEdit" class="form-control">
+                                <div class="col-6 mt-3" id="divDataFimEdit" style="display: none">
+                                    <label for="dataFimEdit">Parcelas</label>
+                                    <input type="number" min="1" name="dataFimEdit" id="dataFimEdit" class="form-control">
                                 </div>
                                 <div class="col-12 mt-3">
                                     <label for="tipoDespesaEdit">Tipo Despesa</label>
@@ -355,13 +355,13 @@
 @section('script')
 
     <script>
-        function modalEditaDespesa(id, descricao, valor, tipoDesp, dataInicio, dataFim, tipoPgto, atrelamento, despFixa) {
+        function modalEditaDespesa(id, descricao, valor, tipoDesp, dataInicio, parcelas, tipoPgto, atrelamento, despFixa) {
             $("#idDespesaEdit").val(id);
             $("#nomeDespesaEdit").val(descricao);
             $("#valorDespesaEdit").val(valor);
             $("#opcaoPagamentoEdit").val(tipoPgto);
             $("#dataInicioEdit").val(dataInicio);
-            $("#dataFimEdit").val(dataFim);
+            $("#dataFimEdit").val(parcelas);
             $("#tipoDespesaEdit").val(tipoDesp);
             $("#atrelamentoEdit").val(atrelamento);
 
@@ -371,6 +371,32 @@
 
             if (despFixa == 'S') {
                 $('#contaFixaEdit').prop('checked', true);
+            }
+
+            if(dataFim != ""){
+                document.getElementById("divDataFimEdit").style.display = "block";
+            }
+        }
+
+        function apareceDataFim(){
+            var opcao = document.getElementById("opcaoPagamento").value;
+            var divDataFim = document.getElementById("divDataFim");
+
+            if(opcao == "CREDITO"){
+                divDataFim.style.display = "block";
+            }else{
+                divDataFim.style.display = "none";
+            }
+        }
+
+        function apareceDataFimEdit(){
+            var opcao = document.getElementById("opcaoPagamentoEdit").value;
+            var divDataFim = document.getElementById("divDataFimEdit");
+
+            if(opcao == "CREDITO"){
+                divDataFim.style.display = "block";
+            }else{
+                divDataFim.style.display = "none";
             }
         }
     </script>

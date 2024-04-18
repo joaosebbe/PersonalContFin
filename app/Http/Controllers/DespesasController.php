@@ -29,21 +29,11 @@ class DespesasController extends Controller
         $despesa = ContasController::retiraMascaraDinheiro($request->valorDespesa);
 
         if ($request->opcaoPagamento == 'CREDITO') {
-            $dataInicio = Carbon::parse($request->dataInicio);
-            $dataFim = Carbon::parse($request->dataFim);
+            $dataInicio = $request->dataInicio;
+            $parcelas = $request->dataFim;
 
-            // Calcula a diferença entre as datas
-            $diferenca = $dataInicio->diffInMonths($dataFim) + 1;
-
-            $dataFim = $request->dataFim;
-            if (date('Y-m', strtotime($request->dataInicio)) > date('Y-m', strtotime($dataFim))) {
-                $dataFim = $request->dataInicio;
-            }
-            if (date('Y-m', strtotime($request->dataInicio)) == date('Y-m', strtotime($dataFim))) {
-                $diferenca = 1;
-            }
-            $valorMensal = $despesa / $diferenca;
-            $dataCobranca = date('Y-m-d', strtotime($request->dataInicio));
+            $valorMensal = $despesa / $parcelas;
+            $dataCobranca = date('Y-m-d', strtotime($dataInicio));
 
             $idDespesa = DB::table('tab_despesas')->insertGetId([
                 'usuario' => auth()->user()->id,
@@ -51,14 +41,14 @@ class DespesasController extends Controller
                 'valor' => $despesa,
                 'tipo_gasto' => $request->tipoDespesa,
                 'data_cobranca' => $dataCobranca,
-                'data_inicio' => date('Y-m-d', strtotime($request->dataInicio)),
-                'data_fim' => (($dataFim != '') ? date('Y-m-d', strtotime($dataFim)) : date('Y-m-d')),
+                'data_inicio' => $dataCobranca,
+                'data_fim' => date('Y-m-d', strtotime($dataCobranca . ' +' . ($parcelas - 1) . ' month')),
                 'tipo_pagamento' => $request->opcaoPagamento,
                 'atrelamento' => $request->atrelamento,
-                'nmr_parcelas' => $diferenca,
+                'nmr_parcelas' => $parcelas,
             ]);
 
-            for ($i = 0; $i < $diferenca; $i++) {
+            for ($i = 0; $i < $parcelas; $i++) {
                 $dataCobranca = date('Y-m-d', strtotime($request->dataInicio . ' +' . $i . ' month'));
                 DB::table('tab_parcelas')->insert([
                     'id_despesa' => $idDespesa,
@@ -94,21 +84,11 @@ class DespesasController extends Controller
         $idDespesa = $request->idDespesaEdit;
 
         if ($request->opcaoPagamentoEdit == 'CREDITO') {
-            $dataInicio = Carbon::parse($request->dataInicioEdit);
-            $dataFim = Carbon::parse($request->dataFimEdit);
+            $dataInicio = $request->dataInicioEdit;
+            $parcelas = $request->dataFimEdit;
 
-            // Calcula a diferença entre as datas
-            $diferenca = $dataInicio->diffInMonths($dataFim) + 1;
-
-            $dataFim = $request->dataFimEdit;
-            if (date('Y-m', strtotime($request->dataInicioEdit)) > date('Y-m', strtotime($dataFim))) {
-                $dataFim = $request->dataInicioEdit;
-            }
-            if (date('Y-m', strtotime($request->dataInicioEdit)) == date('Y-m', strtotime($dataFim))) {
-                $diferenca = 1;
-            }
-            $valorMensal = $despesa / $diferenca;
-            $dataCobranca = date('Y-m-d', strtotime($request->dataInicioEdit));
+            $valorMensal = $despesa / $parcelas;
+            $dataCobranca = date('Y-m-d', $dataInicio);
 
             DB::table('tab_despesas')
                 ->where('id_despesa', $idDespesa)
@@ -118,18 +98,18 @@ class DespesasController extends Controller
                     'valor' => $despesa,
                     'tipo_gasto' => $request->tipoDespesaEdit,
                     'data_cobranca' => $dataCobranca,
-                    'data_inicio' => date('Y-m-d', strtotime($request->dataInicioEdit)),
-                    'data_fim' => (($dataFim != '') ? date('Y-m-d', strtotime($dataFim)) : date('Y-m-d')),
+                    'data_inicio' => $dataCobranca,
+                    'data_fim' => date('Y-m-d', strtotime($dataCobranca . ' +' . ($parcelas - 1) . ' month')),
                     'tipo_pagamento' => $request->opcaoPagamentoEdit,
                     'atrelamento' => $request->atrelamentoEdit,
-                    'nmr_parcelas' => $diferenca,
+                    'nmr_parcelas' => $parcelas,
                 ));
 
             DB::table('tab_parcelas')
                 ->where('id_despesa', $idDespesa)
                 ->delete();
 
-            for ($i = 0; $i < $diferenca; $i++) {
+            for ($i = 0; $i < $parcelas; $i++) {
                 $dataCobranca = date('Y-m-d', strtotime($request->dataInicioEdit . ' +' . $i . ' month'));
                 DB::table('tab_parcelas')->insert([
                     'id_despesa' => $idDespesa,

@@ -52,14 +52,9 @@ class ContasController extends Controller
 
     public static function retiraMascaraDinheiro($valor)
     {
-        if (strpos($valor, 'R$') !== false) {
-            $novoValor = trim(str_replace('R$', '', $valor));
-            $novoValor = trim(str_replace('.', '', $novoValor));
-            $novoValor = floatval(trim(str_replace(',', '.', $novoValor)));
+        $novoValor = trim(str_replace('.', '', $valor));
+        $novoValor = floatval(trim(str_replace(',', '.', $novoValor)));
 
-            return $novoValor;
-        }
-
-        return $valor;
+        return $novoValor;
     }
 }
