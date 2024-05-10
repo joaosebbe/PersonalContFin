@@ -88,7 +88,7 @@ class DespesasController extends Controller
             $parcelas = $request->dataFimEdit;
 
             $valorMensal = $despesa / $parcelas;
-            $dataCobranca = date('Y-m-d', $dataInicio);
+            $dataCobranca = date('Y-m-d', strtotime($dataInicio));
 
             DB::table('tab_despesas')
                 ->where('id_despesa', $idDespesa)

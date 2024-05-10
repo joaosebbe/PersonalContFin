@@ -56,9 +56,9 @@
                         @if ($despesa->receita_despesa == 'D')
                             <tr data-bs-toggle="modal" data-bs-target="#modalEditaDespesa"
                                 onclick="modalEditaDespesa('{{ $despesa->id_despesa }}', '{{ $despesa->descricao }}', '{{ $despesa->valor }}', '{{ $despesa->tipo_gasto }}', '{{ $despesa->data_inicio }}', '{{ $despesa->nmr_parcelas }}', '{{ $despesa->tipo_pagamento }}', '{{ $despesa->atrelamento }}', '{{ $despesa->despesa_fixa }}')"
-                                class="table-danger" style="cursor: pointer">
+                                 style="cursor: pointer">
                         @else
-                            <tr class="table-success" style="cursor: pointer">
+                            <tr style="cursor: pointer">
                         @endif
                         <td>{{ $despesa->descricao }}</td>
                         <td>R$
@@ -69,7 +69,7 @@
                             @endif
                         </td>
                         <td>{{ $despesa->tipo_pagamento }}</td>
-                        <td>{{ $despesa->parcela_atual }}</td>
+                        <td>{{ $despesa->parcela_atual . ' / ' . $despesa->nmr_parcelas }}</td>
                         <td>{{ (($despesa->data_inicio != '') ? date('m/Y', strtotime($despesa->data_inicio)) : '') }}</td>
                         <td>{{ $despesa->data_fim != '' ? date('m/Y', strtotime($despesa->data_fim)) : '' }}
                         </td>
