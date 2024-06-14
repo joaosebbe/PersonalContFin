@@ -23,7 +23,7 @@ class ChecklistController extends Controller
         AND (CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMes%' ELSE d.data_cobranca like '$anoMes%' OR (d.data_cobranca IS NULL AND d.atrelamento <> '') END) 
         GROUP BY d.atrelamento ORDER BY nome_atrelamento");
 
-        $despFixa = DB::select("SELECT d.id_despesa, d.descricao, d.valor, p.id_pgto FROM tab_despesas d LEFT JOIN tab_pagamentos p ON p.id_despesa = d.id_despesa AND p.data_pgto LIKE '$anoMes%' WHERE despesa_fixa = 'S' AND usuario = '" . auth()->user()->id . "' AND atrelamento IS NULL ORDER BY d.descricao");
+        $despFixa = DB::select("SELECT d.id_despesa, d.descricao, d.valor, p.id_pgto FROM tab_despesas d LEFT JOIN tab_pagamentos p ON p.id_despesa = d.id_despesa AND p.data_pgto LIKE '$anoMes%' WHERE despesa_fixa = 'S' AND (d.data_fim IS NULL OR date_format(d.data_fim, '%Y-%m') >= '$anoMes') AND usuario = '" . auth()->user()->id . "' AND atrelamento IS NULL ORDER BY d.descricao");
 
 
         // return dd($despCredito);

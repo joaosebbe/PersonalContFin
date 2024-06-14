@@ -17,7 +17,7 @@ class DespesasController extends Controller
         FROM tab_despesas d 
         LEFT JOIN tab_parcelas p ON d.id_despesa = p.id_despesa
         LEFT JOIN tab_tiposgastos t ON t.id_tipo = d.tipo_gasto
-        WHERE d.receita_despesa = 'D' AND d.usuario = '" . auth()->user()->id . "' AND ((CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMes%' ELSE d.data_cobranca like '$anoMes%' END) OR d.despesa_fixa = 'S') GROUP BY d.tipo_gasto, t.nome_gasto;
+        WHERE d.receita_despesa = 'D' AND d.usuario = '" . auth()->user()->id . "' AND ((CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMes%' ELSE d.data_cobranca like '$anoMes%' END) OR (d.despesa_fixa = 'S' AND (d.data_fim IS NULL OR date_format(d.data_fim, '%Y-%m') >= '$anoMes'))) GROUP BY d.tipo_gasto, t.nome_gasto;
         ");
 
         $receita = new ReceitaController();
@@ -154,6 +154,18 @@ class DespesasController extends Controller
                 ->where('id_despesa', $request->idDespesaExcluir)
                 ->delete();
             }
+        }
+        return redirect('/contas');
+    }
+
+    public function pararPagamento(Request $request) {
+        if($request->idDespesaParar){
+            DB::table('tab_despesas')
+            ->where('id_despesa', $request->idDespesaParar)
+            ->limit(1)
+            ->update(array(
+                'data_fim' => date("Y-m-d"),
+            ));
         }
         return redirect('/contas');
     }

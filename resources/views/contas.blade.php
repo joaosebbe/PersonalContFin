@@ -339,7 +339,13 @@
                             @csrf
                             <input type="hidden" name="idDespesaExcluir" id="idDespesaExcluir">
                             <input type="hidden" name="tpPgto" id="tpPgto">
-                            <button type="submit" class="btn btn-danger" style="float: left">Excluir Despesa</button>
+                            <button type="submit" class="btn btn-danger" style="float: left">Excluir</button>
+                        </form>
+
+                        <form action="{{ route('pararPagamento') }}" method="post">
+                            @csrf
+                            <input type="hidden" name="idDespesaParar" id="idDespesaParar">
+                            <button type="submit" class="btn btn-warning" id="btnPararPagar" style="float: left; margin: 0 10px">Parei de Pagar</button>
                         </form>
                         
                     </div>
@@ -369,8 +375,14 @@
             $("#idDespesaExcluir").val(id);
             $("#tpPgto").val(tipoPgto);
 
+            //Define para form de parar pagamento
+            $("#idDespesaParar").val(id);
+
             if (despFixa == 'S') {
                 $('#contaFixaEdit').prop('checked', true);
+                document.getElementById("btnPararPagar").style.display = "block";
+            }else{
+                document.getElementById("btnPararPagar").style.display = "none";
             }
 
             if(dataFim != ""){

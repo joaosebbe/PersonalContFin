@@ -36,6 +36,7 @@ Route::get('/inicio', [DespesasController::class, 'retornaDespesas'])->middlewar
 Route::post('/despesa', [DespesasController::class, 'insereDespesa'])->name('insereDespesa');
 Route::post('/editaDespesa', [DespesasController::class, 'editaDespesa'])->name('editaDespesa');
 Route::post('/excluiDespesa', [DespesasController::class, 'excluiDespesa'])->name('excluiDespesa');
+Route::post('/pararPagamento', [DespesasController::class, 'pararPagamento'])->name('pararPagamento');
 
 
 Route::post('/alterarReceita', [ReceitaController::class, 'alterarReceita'])->name('alterarReceita');

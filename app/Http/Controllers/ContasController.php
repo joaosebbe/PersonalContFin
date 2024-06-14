@@ -18,7 +18,7 @@ class ContasController extends Controller
         LEFT JOIN tab_tiposgastos t ON t.id_tipo = d.tipo_gasto
         LEFT JOIN tab_atrelamento a ON a.id_atrelamento = d.atrelamento
         LEFT JOIN tab_parcelas p ON p.id_despesa = d.id_despesa
-        WHERE d.usuario = '" . auth()->user()->id . "' AND ((CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMes%' ELSE d.data_cobranca like '$anoMes%' END) OR d.despesa_fixa = 'S')");
+        WHERE d.usuario = '" . auth()->user()->id . "' AND ((CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMes%' ELSE d.data_cobranca like '$anoMes%' END) OR (d.despesa_fixa = 'S' AND (d.data_fim IS NULL OR date_format(d.data_fim, '%Y-%m') >= '$anoMes')))");
 
         return view('contas', compact('tiposDespesas', 'atrelamentos', 'despesas'));
     }
