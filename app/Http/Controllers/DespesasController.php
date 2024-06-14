@@ -20,8 +20,11 @@ class DespesasController extends Controller
         WHERE d.receita_despesa = 'D' AND d.usuario = '" . auth()->user()->id . "' AND ((CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMes%' ELSE d.data_cobranca like '$anoMes%' END) OR d.despesa_fixa = 'S') GROUP BY d.tipo_gasto, t.nome_gasto;
         ");
 
-        // return dd($despesas);
-        return view('inicio', compact('despesas'));
+        $receita = new ReceitaController();
+        $valReceita = $receita->verificaReceita();
+
+        // return dd($valReceita);
+        return view('inicio', compact('despesas', 'valReceita'));
     }
     
     public function insereDespesa(Request $request)
