@@ -19,15 +19,28 @@ class ChecklistController extends Controller
         LEFT JOIN tab_parcelas p ON p.id_despesa = d.id_despesa 
         LEFT JOIN tab_pagamentos pg ON (pg.id_atrelamento = d.atrelamento OR pg.id_despesa = d.id_despesa) AND pg.data_pgto LIKE '$anoMes%'
         WHERE d.usuario = '" . auth()->user()->id . "'
+        AND d.atrelamento IS NOT NULL
         AND d.receita_despesa = 'D'
         AND (CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMes%' ELSE d.data_cobranca like '$anoMes%' OR (d.data_cobranca IS NULL AND d.atrelamento <> '') END) 
         GROUP BY d.atrelamento ORDER BY nome_atrelamento");
+
+        $despCreditoSemAtrelamento = DB::select("SELECT SUM(CASE WHEN p.valor_quebrado IS NOT NULL THEN p.valor_quebrado ELSE d.valor END) AS total_valor, MAX(d.id_despesa) AS id_despesa, MAX(a.nome_atrelamento) AS nome_atrelamento, MAX(d.atrelamento) AS atrelamento, MAX(d.descricao) AS descricao, MAX(pg.id_atrelamento) AS id_atrelamento, MAX(pg.id_despesa) AS despPgto
+        FROM tab_despesas d 
+        LEFT JOIN tab_tiposgastos t ON t.id_tipo = d.tipo_gasto 
+        LEFT JOIN tab_atrelamento a ON a.id_atrelamento = d.atrelamento 
+        LEFT JOIN tab_parcelas p ON p.id_despesa = d.id_despesa 
+        LEFT JOIN tab_pagamentos pg ON (pg.id_atrelamento = d.atrelamento OR pg.id_despesa = d.id_despesa) AND pg.data_pgto LIKE '$anoMes%'
+        WHERE d.usuario = '" . auth()->user()->id . "' 
+        AND d.atrelamento IS NULL
+        AND d.receita_despesa = 'D'
+        AND (CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMes%' ELSE d.data_cobranca like '$anoMes%' OR (d.data_cobranca IS NULL AND d.atrelamento <> '') END) 
+        GROUP BY d.atrelamento, d.id_despesa ORDER BY nome_atrelamento");
 
         $despFixa = DB::select("SELECT d.id_despesa, d.descricao, d.valor, p.id_pgto FROM tab_despesas d LEFT JOIN tab_pagamentos p ON p.id_despesa = d.id_despesa AND p.data_pgto LIKE '$anoMes%' WHERE despesa_fixa = 'S' AND (d.data_fim IS NULL OR date_format(d.data_fim, '%Y-%m') >= '$anoMes') AND usuario = '" . auth()->user()->id . "' AND atrelamento IS NULL ORDER BY d.descricao");
 
 
         // return dd($despCredito);
-        return view('checklist', compact('despCredito', 'despFixa'));
+        return view('checklist', compact('despCredito', 'despCreditoSemAtrelamento', 'despFixa'));
     }
 
     public function pagaContaFixa($codDespesa)

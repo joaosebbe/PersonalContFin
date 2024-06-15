@@ -35,6 +35,22 @@
                                     </li>
                                 @endforeach
 
+                                @foreach ($despCreditoSemAtrelamento as $dcsa)
+                                    <li class="list-group-item border-0 d-flex align-items-center ps-0">
+                                        @if ($dcsa->atrelamento != '')
+                                            <input class="form-check-input me-3" type="checkbox"
+                                                onclick="pagaContaAtrelamento('{{ $dcsa->atrelamento }}')" value=""
+                                                {{ $dcsa->id_atrelamento != '' ? 'checked' : '' }} />
+                                        @else
+                                            <input class="form-check-input me-3" type="checkbox"
+                                                onclick="pagaContaFixa('{{ $dcsa->id_despesa }}')" value=""
+                                                {{ $dcsa->despPgto != '' ? 'checked' : '' }} />
+                                        @endif
+
+                                        {{ ($dcsa->nome_atrelamento != '' ? $dcsa->nome_atrelamento : $dcsa->descricao) . ' = R$ ' . number_format($dcsa->total_valor, 2, ',', '.') }}
+                                    </li>
+                                @endforeach
+
                                 @foreach ($despFixa as $df)
                                     <li class="list-group-item border-0 d-flex align-items-center ps-0">
                                         <input class="form-check-input me-3" type="checkbox"
