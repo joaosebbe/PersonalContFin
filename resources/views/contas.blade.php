@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="container mt-5">
+    <div class="container mt-5 mb-5">
         <form method="POST" action="{{ route('alterarReceita') }}">
             @csrf
             <div class="row form-group">
