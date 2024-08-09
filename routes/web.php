@@ -59,6 +59,8 @@ Route::get('/meusdados', function () {
 
 Route::get('/tipodespesas', [TipoDespesaController::class, 'carregaTipoDespesa']);
 Route::post('/tipoDespesa', [TipoDespesaController::class, 'insereTipoDespesa'])->name('insereTipoDespesa');
+Route::post('/editaTipoDespesa', [TipoDespesaController::class, 'editaTipoDespesa'])->name('editaTipoDespesa');
+Route::post('/excluiTipoDespesa', [TipoDespesaController::class, 'excluiTipoDespesa'])->name('excluiTipoDespesa');
 
 
 Route::get('/atrelamentodespesas', [AtrelamentoController::class, 'carregaAtrelamentos']);
