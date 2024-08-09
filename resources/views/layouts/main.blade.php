@@ -18,6 +18,21 @@
     <link rel="apple-touch-icon" href="{{ url('/img/logo.png') }}">
     <link rel="manifest" href="manifest.json">
 
+    <style>
+        .botoesMenu{
+            border: solid 1px #F8F9FA;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .botoesMenu:active {
+            transform: translateY(6px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+
     @yield('style')
 
 </head>
@@ -55,11 +70,12 @@
 
         <a style="float: right;position: fixed; top: 0px; right: 0px; padding:10px; z-index: 5;"
             href="{{ route('logout') }}" class="text-danger"><i class="fas fa-lg fa-sign-out-alt"></i></a>
-        <nav class="navbar fixed-bottom bg-body-tertiary">
+        <nav class="navbar fixed-bottom bg-body-tertiary shadow-lg" style="border-radius: 25px 25px 0 0">
             <div class="container-fluid">
-                <a class="navbar-brand text-primary" href="/contas"><i class="fas fa-chart-bar fa-lg"></i></a>
-                <a class="navbar-brand text-primary" href="/inicio"><i class="fas fa-lg fa-home"></i></a>
-                <a class="navbar-brand text-primary" href="/checklist"><i class="far fa-check-square fa-lg"></i></a>
+                <a class="navbar-brand text-primary botoesMenu" href="/contas"><i class="fas fa-chart-bar fa-lg"></i></a>
+                <a class="navbar-brand text-primary botoesMenu" href="/inicio"><i class="fas fa-lg fa-home"></i></a>
+                <a class="navbar-brand text-primary botoesMenu" href="/checklist"><i class="fas fa-tasks fa-lg"></i></a>
+                <a class="navbar-brand text-primary botoesMenu" href="/config"><i class="fas fa-cogs fa-lg"></i></a>
             </div>
         </nav>
     </header>

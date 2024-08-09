@@ -50,7 +50,7 @@ class ReceitaController extends Controller
             ReceitaController::inserirAlteracaoLog($valorAtual, $novoValor);
         }
         
-        return redirect('/contas');
+        return redirect('/inicio');
     }
 
     public function inserirAlteracaoLog($valorAntigo, $valorNovo){

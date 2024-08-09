@@ -23,26 +23,6 @@ class ContasController extends Controller
         return view('contas', compact('tiposDespesas', 'atrelamentos', 'despesas'));
     }
 
-    public function insereTipoDespesa(Request $request)
-    {
-        DB::table('tab_tiposgastos')->insert([
-            'id_usuario' => auth()->user()->id,
-            'nome_gasto' => $request->tipoDespesaCad,
-        ]);
-
-        return redirect('/contas');
-    }
-
-    public function insereAtrelamento(Request $request)
-    {
-        DB::table('tab_atrelamento')->insert([
-            'nome_atrelamento' => $request->tipoAtrelamento,
-            'id_usuario' => auth()->user()->id,
-        ]);
-
-        return redirect('/contas');
-    }
-
     public function alterarData(Request $request)
     {
         session()->put('dataAnoMes', $request->novaData);

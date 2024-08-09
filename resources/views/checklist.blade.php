@@ -4,11 +4,18 @@
 
 @section('style')
 
+    <style>
+        .form-check-input:checked {
+            background-color: #31b529;
+            border-color: #31b529;
+        }
+    </style>
+
 @endsection
 
 @section('content')
 
-    <div class="row mt-4" style="padding: 10px">
+    <div class="row" style="padding: 10px">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col col-lg-8 col-xl-6">
@@ -85,7 +92,7 @@
                             title: "Pagamento realizado!",
                             icon: "success"
                         });
-                    }else if(result.resultado == 'deletado'){
+                    } else if (result.resultado == 'deletado') {
                         Swal.fire({
                             title: "Pagamento cancelado!",
                             icon: "warning"
@@ -106,7 +113,7 @@
                             title: "Pagamento realizado!",
                             icon: "success"
                         });
-                    }else if(result.resultado == 'deletado'){
+                    } else if (result.resultado == 'deletado') {
                         Swal.fire({
                             title: "Pagamento cancelado!",
                             icon: "warning"
