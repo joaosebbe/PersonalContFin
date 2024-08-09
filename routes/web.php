@@ -57,13 +57,11 @@ Route::get('/meusdados', function () {
 });
 
 
-Route::get('/tipodespesas', function () {
-    return view('tipodespesas');
-});
+Route::get('/tipodespesas', [TipoDespesaController::class, 'carregaTipoDespesa']);
 Route::post('/tipoDespesa', [TipoDespesaController::class, 'insereTipoDespesa'])->name('insereTipoDespesa');
 
 
-Route::get('/atrelamentodespesas', function () {
-    return view('atrelamentodespesas');
-});
+Route::get('/atrelamentodespesas', [AtrelamentoController::class, 'carregaAtrelamentos']);
 Route::post('/atrelamento', [AtrelamentoController::class, 'insereAtrelamento'])->name('insereAtrelamento');
+Route::post('/editaAtrelamento', [AtrelamentoController::class, 'editaAtrelamento'])->name('editaAtrelamento');
+Route::post('/excluiAtrelamento', [AtrelamentoController::class, 'excluiAtrelamento'])->name('excluiAtrelamento');
