@@ -29,6 +29,8 @@ class ReceitaController extends Controller
             $buscaPrimeiraReceita = DB::select("SELECT * FROM tab_logalteracoes WHERE tipo_alteracao = 'RECEITA' AND id_user = '" . auth()->user()->id . "' ORDER BY data_alteracao ASC LIMIT 1");
             if(count($buscaPrimeiraReceita) == 1){
                 $valReceita = $buscaPrimeiraReceita[0]->valor_antigo;
+            }else if(count($buscaPrimeiraReceita) == 0){
+                $valReceita = auth()->user()->valor_receita;
             }
         }
 

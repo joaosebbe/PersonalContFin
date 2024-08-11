@@ -355,15 +355,6 @@
         $(document).ready(function(){
             $('.money').mask('000.000.000.000.000,00', {reverse: true});
         });
-        $(function() {
-            // $('#receita').maskMoney({
-            //     prefix: 'R$ ',
-            //     allowNegative: true,
-            //     thousands: '.',
-            //     decimal: ',',
-            //     affixesStay: true
-            // });
-        })
     </script>
 
 @endsection

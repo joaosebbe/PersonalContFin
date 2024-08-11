@@ -6,6 +6,7 @@ use App\Http\Controllers\ContasController;
 use App\Http\Controllers\DespesasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MeusDadosController;
 use App\Http\Controllers\ReceitaController;
 use App\Http\Controllers\TipoDespesaController;
 
@@ -55,6 +56,9 @@ Route::post('/alterarReceita', [ReceitaController::class, 'alterarReceita'])->na
 Route::get('/meusdados', function () {
     return view('meusdados');
 });
+Route::post('/editaDados', [MeusDadosController::class, 'editaDados'])->name('editaDados');
+Route::get('/verificaSenha/{password}', [MeusDadosController::class, 'verificaSenha']);
+Route::post('/alteraSenha', [MeusDadosController::class, 'alteraSenha'])->name('alteraSenha');
 
 
 Route::get('/tipodespesas', [TipoDespesaController::class, 'carregaTipoDespesa']);

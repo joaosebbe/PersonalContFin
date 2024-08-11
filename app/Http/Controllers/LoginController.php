@@ -13,12 +13,15 @@ class LoginController extends Controller
     public function auth(Request $request){
         //Pegando o usuario do banco manualmente
         $user = User::where('email', $request->input('email'))->first();
+        
+        $verificaSenha = MeusDadosController::verificaSenha($request->input('senha'), $user->password);
+        $arrayVerificacao = $verificaSenha->getData(true);
 
         if(!$user){
-            return redirect()->route('login')->withErrors(['error' => 'usuario inexistente']);
+            return redirect()->route('login')->withErrors(['error' => 'Usuário inexistente!']);
         }
-        if($request->input('senha') != $user->password){
-            return redirect()->route('login')->withErrors(['error' => 'Email ou senha inválidos! Tente novamente']);
+        if($arrayVerificacao['senhaExiste'] == 'false'){
+            return redirect()->route('login')->withErrors(['error' => 'Email ou senha inválidos! Tente novamente.']);
         }
 
         //faz o login automatico pelo id
@@ -33,7 +36,7 @@ class LoginController extends Controller
         
     }
 
-    public function destroy(){
+    public static function destroy(){
 
         Auth::logout();
 

@@ -68,38 +68,6 @@
 @endsection
 
 @section('script')
-
-    <script>
-        // google.charts.load("current", {
-        //     packages: ["corechart"]
-        // });
-        // google.charts.setOnLoadCallback(drawChart);
-
-        // function drawChart() {
-        //     var data = google.visualization.arrayToDataTable([
-        //         ['Task', 'Hours per Day'],
-        //         @foreach ($despesas as $despesa)
-        //             ['{{ $despesa->nome_gasto }}', {{ $despesa->total_valor }}],
-        //         @endforeach
-        //     ]);
-
-        //     var options = {
-        //         pieHole: 0.5, // Define o tamanho do buraco no meio do gráfico de rosca
-        //         pieSliceText: 'value', // Exibe os valores dos dados nas fatias do gráfico
-        //         legend: {
-        //             position: 'right' // Posiciona a legenda na parte inferior do gráfico
-        //         },
-        //         backgroundColor: 'transparent', // Define o fundo do gráfico como transparente
-        //         chartArea: {
-        //             width: '100%', // Usa toda a largura disponível do contêiner
-        //             height: '80%' // Usa 80% da altura disponível do contêiner
-        //         }
-        //     };
-
-        //     var chart = new google.visualization.PieChart(document.getElementById('chartDespesa'));
-        //     chart.draw(data, options);
-        // }
-    </script>
     <script>
         var options = {
             chart: {
