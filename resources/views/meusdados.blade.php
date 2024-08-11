@@ -54,6 +54,52 @@
                     </div>
                 </div>
             </div>
+            @if (auth()->user()->id == 1)
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalCriaUsuario" style="width: 100%">Criar novo usuário</button>
+                    </div>
+                </div>
+
+                <!-- Modal Cria Usuário -->
+                <div class="modal fade" id="modalCriaUsuario" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Criar Usuário</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" action="{{ route('insereNovoUsuario') }}">
+                                    @csrf
+                                    <div class="row form-group">
+                                        <div class="col-12 mb-3">
+                                            <label for="nomeUsuario" class="form-label">Nome</label>
+                                            <input type="text" class="form-control" id="nomeUsuario" name="nomeUsuario" required>
+                                        </div>
+
+                                        <div class="col-12 mb-3">
+                                            <label for="emailUsuario" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="emailUsuario" name="emailUsuario" required>
+                                        </div>
+
+                                        <div class="col-12 mb-3">
+                                            <label for="celularUsuario" class="form-label">Celular</label>
+                                            <input type="text" class="form-control celular" id="celularUsuario" name="celularUsuario" required>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success">Criar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
         </div>
     </div>
 
@@ -97,7 +143,8 @@
     </div>
 
     <!-- Modal Altera Senha -->
-    <div class="modal fade" id="modalAlterarSenha" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalAlterarSenha" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -173,7 +220,7 @@
             let confirmPassword = document.getElementById("senhaNovaConfirma").value;
             let errorMessages = [];
 
-            if(senhaExiste == "false") {
+            if (senhaExiste == "false") {
                 errorMessages.push("A senha atual deve estar correta para prosseguir.");
             }
 
