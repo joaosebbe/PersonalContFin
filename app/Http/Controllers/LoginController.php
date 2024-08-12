@@ -14,8 +14,6 @@ class LoginController extends Controller
         //Pegando o usuario do banco manualmente
         $user = User::where('email', $request->input('email'))->first();
         
-        
-
         if(!$user){
             return redirect()->route('login')->withErrors(['error' => 'Usuário inexistente!']);
         }else{
@@ -35,7 +33,6 @@ class LoginController extends Controller
 
         return redirect('/inicio');
         // return dd($despesas);
-        
     }
 
     public static function destroy(){
@@ -43,6 +40,5 @@ class LoginController extends Controller
         Auth::logout();
 
         return redirect()->route('login');
-
     }
 }

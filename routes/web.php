@@ -61,6 +61,8 @@ Route::post('/editaDados', [MeusDadosController::class, 'editaDados'])->name('ed
 Route::get('/verificaSenha/{password}', [MeusDadosController::class, 'verificaSenha']);
 Route::post('/alteraSenha', [MeusDadosController::class, 'alteraSenha'])->name('alteraSenha');
 Route::post('/insereNovoUsuario', [NovoUsuarioController::class, 'insereNovoUsuario'])->name('insereNovoUsuario');
+Route::get('/buscaUsuarios', [NovoUsuarioController::class, 'buscaUsuarios']);
+Route::get('/verificaInfoExistentes/{email}/{telefone}', [NovoUsuarioController::class, 'verificaInfoExistentes']);
 
 
 Route::get('/tipodespesas', [TipoDespesaController::class, 'carregaTipoDespesa']);

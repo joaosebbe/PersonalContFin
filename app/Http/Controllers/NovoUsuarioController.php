@@ -22,4 +22,28 @@ class NovoUsuarioController extends Controller
 
         return redirect('/meusdados');
     }
+
+    public function buscaUsuarios(){
+        $usuarios = DB::select('select name, email, telefone from users');
+
+        return response()->json([
+            'users' => $usuarios
+        ]);
+    }
+
+    public function verificaInfoExistentes($email, $telefone){
+        $telefoneSemMask = MeusDadosController::retiraMascaraTelefone($telefone);
+
+        $usuarios = DB::select('select * from users where email = "' . $email . '" or telefone = "' . $telefoneSemMask . '"');
+
+        $infoExiste = 'false';
+
+        if(count($usuarios) > 0){
+            $infoExiste = 'true';
+        }
+
+        return response()->json([
+            'infoExiste' => $infoExiste
+        ]);
+    }
 }
