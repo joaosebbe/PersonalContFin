@@ -14,11 +14,13 @@ class LoginController extends Controller
         //Pegando o usuario do banco manualmente
         $user = User::where('email', $request->input('email'))->first();
         
-        $verificaSenha = MeusDadosController::verificaSenha($request->input('senha'), $user->password);
-        $arrayVerificacao = $verificaSenha->getData(true);
+        
 
         if(!$user){
             return redirect()->route('login')->withErrors(['error' => 'Usuário inexistente!']);
+        }else{
+            $verificaSenha = MeusDadosController::verificaSenha($request->input('senha'), $user->password);
+            $arrayVerificacao = $verificaSenha->getData(true);
         }
         if($arrayVerificacao['senhaExiste'] == 'false'){
             return redirect()->route('login')->withErrors(['error' => 'Email ou senha inválidos! Tente novamente.']);
