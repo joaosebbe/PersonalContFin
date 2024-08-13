@@ -15,7 +15,7 @@ class LoginController extends Controller
         $user = User::where('email', $request->input('email'))->first();
         
         if(!$user){
-            return redirect()->route('login')->withErrors(['error' => 'Usuário inexistente!']);
+            return redirect()->route('login')->withErrors(['error' => 'Email ou senha inválidos! Tente novamente']);
         }else{
             $verificaSenha = MeusDadosController::verificaSenha($request->input('senha'), $user->password);
             $arrayVerificacao = $verificaSenha->getData(true);

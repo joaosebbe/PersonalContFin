@@ -56,4 +56,10 @@ class AtrelamentoController extends Controller
 
         return redirect('/atrelamentodespesas');
     }
+
+    public static function buscaAtrelamentoPorId($id){
+        $atrelamentos = DB::select('select * from tab_atrelamento where id_atrelamento = "' . $id . '"');
+
+        return $atrelamentos[0]->dia_vencimento;
+    }
 }

@@ -64,6 +64,11 @@ class DespesasController extends Controller
             $data = date('Y-m-d', strtotime($request->dataInicio));
             if($request->contaFixa == 'on'){
                 $data = null;
+                if($request->atrelamento == ''){
+                    $diaVencimento = $request->diaVencimento;
+                }else{
+                    $diaVencimento = AtrelamentoController::buscaAtrelamentoPorId($request->atrelamento);
+                }
             }
             DB::table('tab_despesas')->insert([
                 'usuario' => auth()->user()->id,
@@ -72,6 +77,7 @@ class DespesasController extends Controller
                 'tipo_gasto' => $request->tipoDespesa,
                 'data_cobranca' => $data,
                 'data_inicio' => $data,
+                'dia_vencimento' => $diaVencimento,
                 'tipo_pagamento' => $request->opcaoPagamento,
                 'despesa_fixa' => (($request->contaFixa == 'on') ? 'S' : 'N'),
                 'atrelamento' => $request->atrelamento,
@@ -125,6 +131,11 @@ class DespesasController extends Controller
             $data = date('Y-m-d', strtotime($request->dataInicioEdit));
             if($request->contaFixaEdit == 'on'){
                 $data = null;
+                if($request->atrelamentoEdit == ''){
+                    $diaVencimento = $request->diaVencimentoEdit;
+                }else{
+                    $diaVencimento = AtrelamentoController::buscaAtrelamentoPorId($request->atrelamentoEdit);
+                }
             }
             DB::table('tab_despesas')
                 ->where('id_despesa', $idDespesa)
@@ -135,6 +146,7 @@ class DespesasController extends Controller
                     'tipo_gasto' => $request->tipoDespesaEdit,
                     'data_cobranca' => $data,
                     'data_inicio' => $data,
+                    'dia_vencimento' => $diaVencimento,
                     'tipo_pagamento' => $request->opcaoPagamentoEdit,
                     'despesa_fixa' => (($request->contaFixaEdit == 'on') ? 'S' : 'N'),
                     'atrelamento' => $request->atrelamentoEdit,
