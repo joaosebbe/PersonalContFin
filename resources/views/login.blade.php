@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <title>MeuContFin - Login</title>
-    <link rel="icon" href="{{ url('/img/logo.png') }}" />
+    <link rel="icon" href="{{ url('/img/Meu_ContFin-removebg.png') }}" />
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sign-in/">
 
@@ -180,9 +180,12 @@
                 {{ $message }}
             </div>
         @enderror
-        <form action="{{ route('login.auth') }}" method="POST">
+
+        <img src="/img/Meu_ContFin-removebg.png" alt="" width="100%">
+
+        <form action="{{ route('login.auth') }}" method="POST" class="mt-3">
             @csrf
-            <h1 class="h3 mb-3 fw-normal">Bem vindo!</h1>
+            {{-- <h3 class="h3 mb-3 fw-normal">Bem vindo!</h3> --}}
 
             <div class="form-floating">
                 <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">

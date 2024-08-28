@@ -14,8 +14,8 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-    <link rel="icon" href="{{ url('/img/logo.png') }}" />
-    <link rel="apple-touch-icon" href="{{ url('/img/logo.png') }}">
+    <link rel="icon" href="{{ url('/img/Meu_ContFin-removebg.png') }}" />
+    <link rel="apple-touch-icon" href="{{ url('/img/Meu_ContFin-removebg.png') }}">
     <link rel="manifest" href="manifest.json">
 
     <style>
