@@ -16,7 +16,7 @@
 
     <link rel="icon" href="{{ url('/img/Meu_ContFin-removebg.png') }}" />
     <link rel="apple-touch-icon" href="{{ url('/img/Meu_ContFin-removebg.png') }}">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest_V.1.0.1.json">
 
     <style>
         .botoesMenu{
