@@ -23,10 +23,29 @@ class DespesasController extends Controller
         $receita = new ReceitaController();
         $valReceita = $receita->verificaReceita();
 
-        // return dd($valReceita);
-        return view('inicio', compact('despesas', 'valReceita'));
+        $arrayMonths = ["01" => "Jan", "02" => "Fev", "03" => "Mar", "04" => "Abr", "05" => "Mai", "06" => "Jun", "07" => "Jul", "08" => "Ago", "09" => "Set", "10" => "Out", "11" => "Nov", "12" => "Dez"];
+
+        $arrayVlTot = array();
+        for ($i = -6; $i < 6; $i++) {
+            $mes = $arrayMonths[date("m", strtotime($anoMes . ' ' . $i . ' months'))];
+
+            $anoMesChart = date('Y-m', strtotime($anoMes . ' ' . $i . ' months'));
+
+            $despesasMes = DB::select("SELECT SUM(CASE WHEN p.valor_quebrado IS NOT NULL THEN p.valor_quebrado ELSE d.valor END) AS total_valor, t.nome_gasto FROM tab_despesas d LEFT JOIN tab_parcelas p ON d.id_despesa = p.id_despesa LEFT JOIN tab_tiposgastos t ON t.id_tipo = d.tipo_gasto WHERE d.receita_despesa = 'D' AND d.usuario = '" . auth()->user()->id . "' AND ((CASE WHEN p.data IS NOT NULL THEN p.data like '$anoMesChart%' ELSE d.data_cobranca like '$anoMesChart%' END) OR (d.  despesa_fixa = 'S' AND (d.data_fim IS NULL OR date_format(d.data_fim, '%Y-%m') >= '$anoMesChart'))) GROUP BY d.tipo_gasto, t.nome_gasto;
+            ");
+
+            $valorTotalDesp = 0;
+            foreach($despesasMes as $despMes){
+                $valorTotalDesp = $valorTotalDesp + $despMes->total_valor;
+            }
+
+            $arrayVlTot[] = $valorTotalDesp;
+        }
+
+        // return dd($array);
+        return view('inicio', compact('despesas', 'valReceita', 'arrayMonths', 'arrayVlTot'));
     }
-    
+
     public function insereDespesa(Request $request)
     {
         $despesa = ContasController::retiraMascaraDinheiro($request->valorDespesa);
@@ -62,11 +81,11 @@ class DespesasController extends Controller
             }
         } else {
             $data = date('Y-m-d', strtotime($request->dataInicio));
-            if($request->contaFixa == 'on'){
+            if ($request->contaFixa == 'on') {
                 $data = null;
-                if($request->atrelamento == ''){
+                if ($request->atrelamento == '') {
                     $diaVencimento = $request->diaVencimento;
-                }else{
+                } else {
                     $diaVencimento = AtrelamentoController::buscaAtrelamentoPorId($request->atrelamento);
                 }
             }
@@ -129,11 +148,11 @@ class DespesasController extends Controller
             }
         } else {
             $data = date('Y-m-d', strtotime($request->dataInicioEdit));
-            if($request->contaFixaEdit == 'on'){
+            if ($request->contaFixaEdit == 'on') {
                 $data = null;
-                if($request->atrelamentoEdit == ''){
+                if ($request->atrelamentoEdit == '') {
                     $diaVencimento = $request->diaVencimentoEdit;
-                }else{
+                } else {
                     $diaVencimento = AtrelamentoController::buscaAtrelamentoPorId($request->atrelamentoEdit);
                 }
             }
@@ -156,28 +175,30 @@ class DespesasController extends Controller
         return redirect('/contas');
     }
 
-    public function excluiDespesa(Request $request) {
-        if($request->idDespesaExcluir){
+    public function excluiDespesa(Request $request)
+    {
+        if ($request->idDespesaExcluir) {
             DB::table('tab_despesas')
                 ->where('id_despesa', $request->idDespesaExcluir)
                 ->delete();
-            if($request->tpPgto == 'CREDITO'){
+            if ($request->tpPgto == 'CREDITO') {
                 DB::table('tab_parcelas')
-                ->where('id_despesa', $request->idDespesaExcluir)
-                ->delete();
+                    ->where('id_despesa', $request->idDespesaExcluir)
+                    ->delete();
             }
         }
         return redirect('/contas');
     }
 
-    public function pararPagamento(Request $request) {
-        if($request->idDespesaParar){
+    public function pararPagamento(Request $request)
+    {
+        if ($request->idDespesaParar) {
             DB::table('tab_despesas')
-            ->where('id_despesa', $request->idDespesaParar)
-            ->limit(1)
-            ->update(array(
-                'data_fim' => date("Y-m-d"),
-            ));
+                ->where('id_despesa', $request->idDespesaParar)
+                ->limit(1)
+                ->update(array(
+                    'data_fim' => date("Y-m-d"),
+                ));
         }
         return redirect('/contas');
     }

@@ -19,6 +19,10 @@
     <link rel="manifest" href="manifest_V.1.0.1.json">
 
     <style>
+        body{
+            max-width: 1000px;
+            margin: 0 auto !important;
+        }
         .botoesMenu{
             border: solid 1px #F8F9FA;
             padding: 5px;

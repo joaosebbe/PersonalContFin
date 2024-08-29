@@ -56,9 +56,16 @@
                 </span>
             </div>
         </div>
+
         <div class="card text-bg shadow-lg mb-3">
-            <h5 class="card-title mt-2">Despesas</h5>
-            <div class="card-body" id="chartDespesa" style="width: 100%; margin-top: -30px; max-height: 400px">
+            {{-- <h5 class="card-title mt-2">Despesas</h5> --}}
+            <div class="card-body" id="chartDespesa" style="width: 100%;">
+
+            </div>
+        </div>
+        <div class="card text-bg shadow-lg mb-5" style="padding: 0 !important;">
+            {{-- <h5 class="card-title mt-2">Despesas</h5> --}}
+            <div class="card-body" id="chart12months" style="width: 100%; padding: 0 !important;">
 
             </div>
         </div>
@@ -71,7 +78,8 @@
     <script>
         var options = {
             chart: {
-                type: 'donut'
+                type: 'donut',
+                height: 350
             },
             plotOptions: {
                 pie: {
@@ -89,11 +97,104 @@
                 @foreach ($despesas as $despesa)
                     '{{ $despesa->nome_gasto }}',
                 @endforeach
-            ]
+            ],
+            title: {
+                text: 'Despesas Categorias (mês atual)',
+                floating: true,
+                offsetY: -5,
+                align: 'center',
+                style: {
+                    color: '#444'
+                }
+            }
         }
 
         var chart = new ApexCharts(document.querySelector("#chartDespesa"), options);
 
+        chart.render();
+    </script>
+
+    <script>
+        var options = {
+            series: [{
+                name: 'Despesa',
+                data: [
+                    @for ($i = 0; $i < count($arrayVlTot); $i++)
+                        {{ $arrayVlTot[$i] }},
+                    @endfor
+                ]
+            }],
+            chart: {
+                height: 350,
+                type: 'bar',
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 5,
+                    dataLabels: {
+                        position: 'top', // top, center, bottom
+                        total: {
+                            enabled: true,
+                            style: {
+                                fontSize: '13px',
+                                fontWeight: 900
+                            }
+                        }
+                    },
+                }
+            },
+            xaxis: {
+                categories: [
+                    @for ($i = -6; $i < 6; $i++)
+                        '{{ $arrayMonths[date('m', strtotime(session()->get('dataAnoMes') . ' ' . $i . ' months'))] }}',
+                    @endfor
+                ],
+                position: 'bottom',
+                axisBorder: {
+                    show: false
+                },
+                axisTicks: {
+                    show: false
+                },
+                crosshairs: {
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            colorFrom: '#D8E3F0',
+                            colorTo: '#BED1E6',
+                            stops: [0, 100],
+                            opacityFrom: 0.4,
+                            opacityTo: 0.5,
+                        }
+                    }
+                },
+                tooltip: {
+                    enabled: true,
+                }
+            },
+            yaxis: {
+                axisBorder: {
+                    show: false
+                },
+                axisTicks: {
+                    show: false,
+                },
+                labels: {
+                    show: false
+                }
+            },
+            title: {
+                text: 'Despesas dos Últimos 12 meses',
+                floating: true,
+                offsetY: 0,
+                align: 'center',
+                style: {
+                    color: '#444'
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart12months"), options);
         chart.render();
     </script>
 
