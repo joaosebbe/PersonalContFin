@@ -115,7 +115,7 @@
     </script>
 
     <script>
-        var options = {
+        var options2 = {
             series: [{
                 name: 'Despesa',
                 data: [
@@ -131,17 +131,18 @@
             plotOptions: {
                 bar: {
                     borderRadius: 5,
-                    dataLabels: {
-                        position: 'top', // top, center, bottom
-                        total: {
-                            enabled: true,
-                            style: {
-                                fontSize: '13px',
-                                fontWeight: 900
-                            }
-                        }
+                    colors: {
+                        ranges: [{
+                            from: 0,
+                            to: 1000000000,
+                            color: '#FEB019'
+                        }]
                     },
+                    
                 }
+            },
+            dataLabels: {
+                enabled: false // Esta é outra configuração global que deve ser desativada
             },
             xaxis: {
                 categories: [
@@ -150,41 +151,18 @@
                     @endfor
                 ],
                 position: 'bottom',
-                axisBorder: {
-                    show: false
-                },
-                axisTicks: {
-                    show: false
-                },
-                crosshairs: {
-                    fill: {
-                        type: 'gradient',
-                        gradient: {
-                            colorFrom: '#D8E3F0',
-                            colorTo: '#BED1E6',
-                            stops: [0, 100],
-                            opacityFrom: 0.4,
-                            opacityTo: 0.5,
-                        }
-                    }
-                },
-                tooltip: {
-                    enabled: true,
-                }
             },
             yaxis: {
-                axisBorder: {
-                    show: false
-                },
-                axisTicks: {
-                    show: false,
-                },
                 labels: {
-                    show: false
+                    formatter: function(value) {
+                        return value.toLocaleString('pt-BR', {
+                            minimumFractionDigits: 2
+                        });
+                    }
                 }
             },
             title: {
-                text: 'Despesas dos Últimos 12 meses',
+                text: 'Despesas 12 meses',
                 floating: true,
                 offsetY: 0,
                 align: 'center',
@@ -194,8 +172,8 @@
             }
         };
 
-        var chart = new ApexCharts(document.querySelector("#chart12months"), options);
-        chart.render();
+        var chart2 = new ApexCharts(document.querySelector("#chart12months"), options2);
+        chart2.render();
     </script>
 
 
